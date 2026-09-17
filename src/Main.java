@@ -52,7 +52,7 @@ public class Main {
         alice.noterRider(bob, 5);
         System.out.println("Note moyenne de " + bob.getNom() + " : " + bob.getNoteMoyenne());
         System.out.println("Historique de " + alice.getNom() + " : "
-                + alice.getHistorique().size() + " commande(s)");
+                + alice.getNbCommandes() + " commande(s)");
         System.out.println("Statut final commande #" + cmd.getNumero() + " : " + cmd.getStatut());
         System.out.println("Statut final livraison : " + liv.getStatut());
 

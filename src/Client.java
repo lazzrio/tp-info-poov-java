@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /*
  Classe Client, herite de Utilisateur.
  Represente un utilisateur qui commande des repas.
@@ -7,7 +5,8 @@ import java.util.ArrayList;
 public class Client extends Utilisateur {
     // Attributs
     private String adresseLivraison;
-    private ArrayList<Commande> historique;
+    private Commande[] historique;   // tableau de commandes
+    private int nbCommandes;         // nombre reel d'elements dans le tableau
     private boolean abonnementPlus;
 
 
@@ -16,7 +15,8 @@ public class Client extends Utilisateur {
     public Client() {
         super();
         this.adresseLivraison = "";
-        this.historique = new ArrayList<Commande>();
+        this.historique = new Commande[20];
+        this.nbCommandes = 0;
         this.abonnementPlus = false;
     }
 
@@ -28,7 +28,8 @@ public class Client extends Utilisateur {
                   String adresseLivraison, boolean abonnementPlus) {
         super(nom, email, motDePasse);
         this.adresseLivraison = adresseLivraison;
-        this.historique = new ArrayList<Commande>();
+        this.historique = new Commande[20];
+        this.nbCommandes = 0;
         this.abonnementPlus = abonnementPlus;
     }
 
@@ -37,7 +38,8 @@ public class Client extends Utilisateur {
 
     public Commande passerCommande(Restaurant r, int numero) {
         Commande c = new Commande(numero, this, r);
-        historique.add(c);
+        historique[nbCommandes] = c;
+        nbCommandes++;
         System.out.println(nom + " passe la commande #" + numero + " chez " + r.getNom());
         return c;
     }
@@ -68,5 +70,6 @@ public class Client extends Utilisateur {
 
     public String getAdresseLivraison() { return adresseLivraison; }
     public boolean isAbonnementPlus()   { return abonnementPlus; }
-    public ArrayList<Commande> getHistorique() { return historique; }
+    public Commande[] getHistorique()   { return historique; }
+    public int getNbCommandes()         { return nbCommandes; }
 }

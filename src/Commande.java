@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /*
  Classe Commande : passee par un Client aupres d'un Restaurant.
  AGREGATION : contient des Plat (les plats existent sans la commande)
@@ -13,7 +11,8 @@ public class Commande {
     private double pourboire;
     private Client client;
     private Restaurant restaurant;
-    private ArrayList<Plat> plats;   // AGREGATION
+    private Plat[] plats;            // AGREGATION : tableau de plats
+    private int nbPlats;             // nombre reel de plats dans la commande
     private Livraison livraison;     // COMPOSITION
 
 
@@ -24,7 +23,8 @@ public class Commande {
         this.statut = "NOUVELLE";
         this.montantTotal = 0.0;
         this.pourboire = 0.0;
-        this.plats = new ArrayList<Plat>();
+        this.plats = new Plat[20];
+        this.nbPlats = 0;
     }
 
     /*
@@ -38,14 +38,16 @@ public class Commande {
         this.statut = "NOUVELLE";
         this.montantTotal = 0.0;
         this.pourboire = 0.0;
-        this.plats = new ArrayList<Plat>();
+        this.plats = new Plat[20];
+        this.nbPlats = 0;
     }
 
 
     // Methode qui ajoute un plat a la commande (agregation)
 
     public void ajouterPlat(Plat p) {
-        plats.add(p);
+        plats[nbPlats] = p;
+        nbPlats++;
         System.out.println("  + " + p + " ajoute a la commande #" + numero);
     }
 
@@ -54,8 +56,8 @@ public class Commande {
 
     public double calculerTotal() {
         double total = 0.0;
-        for (Plat p : plats) {
-            total += p.getPrix();
+        for (int i = 0; i < nbPlats; i++) {
+            total += plats[i].getPrix();
         }
         total += pourboire;
         this.montantTotal = total;
@@ -95,5 +97,7 @@ public class Commande {
     public Livraison getLivraison()   { return livraison; }
     public Restaurant getRestaurant() { return restaurant; }
     public Client getClient()         { return client; }
+    public Plat[] getPlats()          { return plats; }
+    public int getNbPlats()           { return nbPlats; }
     public void setStatut(String s)   { this.statut = s; }
 }
