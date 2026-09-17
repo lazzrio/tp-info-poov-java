@@ -1,27 +1,27 @@
 import java.util.Date;
 
-/**
- * Classe Livraison : creee par une Commande (COMPOSITION), assuree par un Livreur.
- * La Livraison n'existe pas sans sa Commande.
+/*
+ Classe Livraison : creee par une Commande (COMPOSITION), assuree par un Livreur.
+ La Livraison n'existe pas sans sa Commande.
  */
 public class Livraison {
-    /** Attributs */
+    // Attributs
     private Date dateDepart;
     private Date dateArrivee;
     private String statut;
     private Commande commande;
     private Livreur livreur;
 
-    /*
-     * Constructeur par defaut
-     */
+
+    // Constructeur par defaut
+
     public Livraison() {
         this.statut = "EN_ATTENTE";
     }
 
     /*
-     * Constructeur parametre
-     * @params : la commande a livrer, le livreur assigne
+     Constructeur parametre
+     En parametre : la commande a livrer, le livreur assigne
      */
     public Livraison(Commande commande, Livreur livreur) {
         this.commande = commande;
@@ -30,27 +30,27 @@ public class Livraison {
         this.dateDepart = new Date();
     }
 
-    /*
-     * Methode qui demarre la livraison
-     */
+
+    // Methode qui demarre la livraison
+
     public void demarrer() {
         this.dateDepart = new Date();
         this.statut = "EN_COURS";
         System.out.println("Livraison #" + commande.getNumero() + " demarree.");
     }
 
-    /*
-     * Methode qui termine la livraison
-     */
+
+    // Methode qui termine la livraison
+
     public void terminer() {
         this.dateArrivee = new Date();
         this.statut = "LIVREE";
         System.out.println("Livraison #" + commande.getNumero() + " terminee.");
     }
 
-    /*
-     * Getters / setter statut
-     */
+
+    // Getters / setter statut
+
     public String getStatut()       { return statut; }
     public Commande getCommande()   { return commande; }
     public Livreur getLivreur()     { return livreur; }
