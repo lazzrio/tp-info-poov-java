@@ -9,10 +9,22 @@ public class Main {
 
         // Setup : creation des objets (Q2 : diagramme de classes)
         Restaurant r = new Restaurant("Chez Mario", "12 rue de Paris", "Paris 16");
+
+        // Tableau d'allergenes pour la pizza
+        String[] allergenesPizza = new String[2];
+        allergenesPizza[0] = "gluten";
+        allergenesPizza[1] = "lactose";
         Plat pizza = new Plat("Pizza Margherita", 12.50,
-                "Tomate, mozzarella, basilic", new String[]{"gluten", "lactose"});
+                "Tomate, mozzarella, basilic", allergenesPizza);
+
+        // Tableau d'allergenes pour les pates
+        String[] allergenesPasta = new String[3];
+        allergenesPasta[0] = "gluten";
+        allergenesPasta[1] = "oeuf";
+        allergenesPasta[2] = "lactose";
         Plat pasta = new Plat("Pasta Carbonara", 10.00,
-                "Lardons, oeuf, parmesan", new String[]{"gluten", "oeuf", "lactose"});
+                "Lardons, oeuf, parmesan", allergenesPasta);
+
         r.gererMenu(pizza);
         r.gererMenu(pasta);
 
