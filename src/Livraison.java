@@ -9,6 +9,7 @@ public class Livraison {
     private Date dateDepart;
     private Date dateArrivee;
     private String statut;
+    private int tempsEstime;         // en minutes
     private Commande commande;
     private Livreur livreur;
 
@@ -17,17 +18,18 @@ public class Livraison {
 
     public Livraison() {
         this.statut = "EN_ATTENTE";
+        this.tempsEstime = 0;
     }
 
     /*
      Constructeur parametre
-     En parametre : la commande a livrer, le livreur assigne
+     En parametre : la commande a livrer, le livreur assigne, le temps estime (min)
      */
-    public Livraison(Commande commande, Livreur livreur) {
+    public Livraison(Commande commande, Livreur livreur, int tempsEstime) {
         this.commande = commande;
         this.livreur = livreur;
         this.statut = "EN_ATTENTE";
-        this.dateDepart = new Date();
+        this.tempsEstime = tempsEstime;
     }
 
 
@@ -36,7 +38,8 @@ public class Livraison {
     public void demarrer() {
         this.dateDepart = new Date();
         this.statut = "EN_COURS";
-        System.out.println("Livraison #" + commande.getNumero() + " demarree.");
+        System.out.println("Livraison #" + commande.getNumero()
+                + " demarree (arrivee prevue dans " + tempsEstime + " min).");
     }
 
 
@@ -54,6 +57,7 @@ public class Livraison {
     public String getStatut()       { return statut; }
     public Commande getCommande()   { return commande; }
     public Livreur getLivreur()     { return livreur; }
+    public int getTempsEstime()     { return tempsEstime; }
     public Date getDateDepart()     { return dateDepart; }
     public Date getDateArrivee()    { return dateArrivee; }
     public void setStatut(String s) { this.statut = s; }

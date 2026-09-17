@@ -1,13 +1,15 @@
 import java.util.ArrayList;
 
 /*
- Classe Restaurant : propose un menu de Plats et recoit les commandes.
+ Classe Restaurant : propose un menu de Plats et prepare les commandes.
  */
 public class Restaurant {
     // Attributs
     private String nom;
     private String adresse;
     private ArrayList<Plat> menu;
+    private double noteMoyenne;
+    private String zoneLivraison;
 
 
     // Constructeur par defaut
@@ -16,32 +18,28 @@ public class Restaurant {
         this.nom = "Restaurant";
         this.adresse = "";
         this.menu = new ArrayList<Plat>();
+        this.noteMoyenne = 0.0;
+        this.zoneLivraison = "";
     }
 
     /*
      Constructeur parametre
-     En parametre : nom, adresse
+     En parametre : nom, adresse, zone de livraison
      */
-    public Restaurant(String nom, String adresse) {
+    public Restaurant(String nom, String adresse, String zoneLivraison) {
         this.nom = nom;
         this.adresse = adresse;
         this.menu = new ArrayList<Plat>();
+        this.noteMoyenne = 0.0;
+        this.zoneLivraison = zoneLivraison;
     }
 
 
-    // Methode qui ajoute un plat au menu du restaurant
+    // Methode qui gere le menu : ajoute un plat
 
-    public void ajouterPlat(Plat p) {
+    public void gererMenu(Plat p) {
         menu.add(p);
-    }
-
-
-    // Methode qui verifie si un plat est disponible dans le menu
-
-    public boolean confirmerDisponibilite(Plat p) {
-        boolean dispo = menu.contains(p);
-        System.out.println(nom + " confirme disponibilite de " + p.getNom() + " : " + dispo);
-        return dispo;
+        System.out.println(p.getNom() + " ajoute au menu de " + nom);
     }
 
 
@@ -52,9 +50,19 @@ public class Restaurant {
     }
 
 
+    // Methode qui simule la preparation de la commande
+
+    public void preparerCommande(Commande c) {
+        c.setStatut("EN_PREPARATION");
+        System.out.println(nom + " prepare la commande #" + c.getNumero());
+    }
+
+
     // Getters
 
-    public String getNom()           { return nom; }
-    public String getAdresse()       { return adresse; }
-    public ArrayList<Plat> getMenu() { return menu; }
+    public String getNom()             { return nom; }
+    public String getAdresse()         { return adresse; }
+    public ArrayList<Plat> getMenu()   { return menu; }
+    public double getNoteMoyenne()     { return noteMoyenne; }
+    public String getZoneLivraison()   { return zoneLivraison; }
 }

@@ -1,11 +1,9 @@
-import java.util.Objects;
-
 /*
- Classe mere de tous les utilisateurs de l'application FastBite.
- Sert de base a l'heritage vers Client et Livreur (Q2 TP2).
+ Classe mere de tous les utilisateurs de l'application.
+ Sert de base a l'heritage vers Client et Livreur.
  */
 public class Utilisateur {
-    // Attributs communs a tous les utilisateurs
+    // Attributs
     protected String nom;
     protected String email;
     protected String motDePasse;
@@ -21,7 +19,7 @@ public class Utilisateur {
 
     /*
      Constructeur parametre
-     En parametre : nom, email et mot de passe
+     En parametre : nom, email, mot de passe
      */
     public Utilisateur(String nom, String email, String motDePasse) {
         this.nom = nom;
@@ -33,7 +31,7 @@ public class Utilisateur {
     // Methode qui verifie si les identifiants correspondent
 
     public boolean seConnecter(String email, String mdp) {
-        return Objects.equals(this.email, email) && Objects.equals(this.motDePasse, mdp);
+        return this.email.equals(email) && this.motDePasse.equals(mdp);
     }
 
 
@@ -44,16 +42,17 @@ public class Utilisateur {
     }
 
 
+    // Methode qui permet de modifier les infos de profil
+
+    public void modifierProfil(String nouveauNom, String nouveauEmail) {
+        this.nom = nouveauNom;
+        this.email = nouveauEmail;
+        System.out.println("Profil de " + nom + " mis a jour.");
+    }
+
+
     // Getters
 
     public String getNom()   { return nom; }
     public String getEmail() { return email; }
-
-
-    // Affichage textuel de l'utilisateur
-
-    @Override
-    public String toString() {
-        return "Utilisateur[" + nom + ", " + email + "]";
-    }
 }

@@ -5,10 +5,10 @@ import java.util.ArrayList;
  Represente un utilisateur qui commande des repas.
  */
 public class Client extends Utilisateur {
-    // Attributs specifiques au client
+    // Attributs
     private String adresseLivraison;
     private ArrayList<Commande> historique;
-    private double solde;
+    private boolean abonnementPlus;
 
 
     // Constructeur par defaut
@@ -17,25 +17,24 @@ public class Client extends Utilisateur {
         super();
         this.adresseLivraison = "";
         this.historique = new ArrayList<Commande>();
-        this.solde = 0.0;
+        this.abonnementPlus = false;
     }
 
     /*
      Constructeur parametre
-     En parametre : nom, email, mot de passe, adresse de livraison
+     En parametre : nom, email, mot de passe, adresse de livraison, abonnement Plus
      */
-    public Client(String nom, String email, String motDePasse, String adresseLivraison) {
-        super(nom, email, motDePasse);   // appel du constructeur de la classe mere
+    public Client(String nom, String email, String motDePasse,
+                  String adresseLivraison, boolean abonnementPlus) {
+        super(nom, email, motDePasse);
         this.adresseLivraison = adresseLivraison;
         this.historique = new ArrayList<Commande>();
-        this.solde = 50.0;               // 50 EUR de credit initial
+        this.abonnementPlus = abonnementPlus;
     }
 
-    /*
-     Methode qui cree une nouvelle commande chez un restaurant
-     En parametre : le restaurant et le numero de commande
-     Renvoie la commande creee
-     */
+
+    // Methode qui cree une nouvelle commande chez un restaurant
+
     public Commande passerCommande(Restaurant r, int numero) {
         Commande c = new Commande(numero, this, r);
         historique.add(c);
@@ -44,23 +43,23 @@ public class Client extends Utilisateur {
     }
 
 
-    // Methode qui debite le solde du client si suffisant
+    // Methode qui paye une commande (livraison gratuite si abonnement Plus)
 
-    public boolean payerCommande(Commande c) {
-        if (solde >= c.getMontantTotal()) {
-            solde -= c.getMontantTotal();
-            c.setStatut("PAYEE");
-            System.out.println(nom + " a paye " + c.getMontantTotal() + " EUR (solde restant : " + solde + ")");
-            return true;
+    public void payerCommande(Commande c) {
+        double montant = c.calculerTotal();
+        if (abonnementPlus) {
+            System.out.println(nom + " (Plus) paye " + montant + " EUR sans frais de livraison.");
+        } else {
+            System.out.println(nom + " paye " + montant + " EUR.");
         }
-        System.out.println("Solde insuffisant pour " + nom);
-        return false;
+        c.setStatut("PAYEE");
     }
 
 
-    // Methode qui permet au client de noter un livreur
+    // Methode qui permet au client de noter un livreur (rider)
 
-    public void noterLivreur(Livreur l, int note) {
+    public void noterRider(Livreur l, double note) {
+        l.recevoirNote(note);
         System.out.println(nom + " note " + l.getNom() + " : " + note + "/5");
     }
 
@@ -68,6 +67,6 @@ public class Client extends Utilisateur {
     // Getters
 
     public String getAdresseLivraison() { return adresseLivraison; }
-    public double getSolde()            { return solde; }
+    public boolean isAbonnementPlus()   { return abonnementPlus; }
     public ArrayList<Commande> getHistorique() { return historique; }
 }
