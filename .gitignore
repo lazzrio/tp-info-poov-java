@@ -2,3 +2,8 @@ out/
 .idea/
 *.iml
 *.class
+
+out/
+__pycache__/
+*.class
+*.tmp.html

@@ -1,0 +1,42 @@
+
+==================== Q2 - FICHIER TEXTE (.txt) ====================
+Pizza Margherita ajoute au menu de Chez Mario
+Pasta Carbonara ajoute au menu de Chez Mario
+Eau minerale ajoute au menu de Chez Mario
+
+>>> 1. ECRITURE du menu dans data/menu_chezmario.txt
+Menu de Chez Mario ecrit dans data/menu_chezmario.txt (3 plats)
+--- contenu brut de data/menu_chezmario.txt ---
+1 | Pizza Margherita;12.5;Tomate, mozzarella, basilic;gluten,lactose
+2 | Pasta Carbonara;10.0;Lardons, oeuf, parmesan;gluten,oeuf,lactose
+3 | Eau minerale;2.0;Bouteille 50cl;
+--- fin du fichier ---
+
+>>> 2. LECTURE du fichier dans un nouveau restaurant, puis AFFICHAGE
+Pizza Margherita ajoute au menu de Chez Mario (relu)
+Pasta Carbonara ajoute au menu de Chez Mario (relu)
+Eau minerale ajoute au menu de Chez Mario (relu)
+3 plat(s) lu(s) depuis data/menu_chezmario.txt
+Menu de Chez Mario (relu) (Paris 16) :
+- Pizza Margherita : 12.5 EUR (Tomate, mozzarella, basilic) [allergenes : gluten, lactose]
+- Pasta Carbonara : 10.0 EUR (Lardons, oeuf, parmesan) [allergenes : gluten, oeuf, lactose]
+- Eau minerale : 2.0 EUR (Bouteille 50cl)
+
+>>> 3. Fichier introuvable (IOException propagee puis attrapee)
+Attrape (FileNotFoundException) : fichier introuvable -> data/inexistant.txt
+
+>>> 4. Fichier mal forme : prix non numerique (FormatFichierException + cause)
+--- contenu brut de data/menu_corrompu1.txt ---
+1 | Pizza Margherita;12.5;Tomate, mozzarella;gluten,lactose
+2 | Tiramisu;abc;Dessert maison;lactose
+--- fin du fichier ---
+Attrape : Fichier data/menu_corrompu1.txt, ligne 2 : prix non numerique [Tiramisu;abc;Dessert maison;lactose]
+Cause d'origine : java.lang.NumberFormatException: For input string: "abc"
+
+>>> 5. Fichier mal forme : nombre de champs incorrect
+--- contenu brut de data/menu_corrompu2.txt ---
+1 | Pizza Margherita;12.5;Tomate, mozzarella;gluten,lactose
+2 | Tiramisu;5.5
+--- fin du fichier ---
+Attrape : Fichier data/menu_corrompu2.txt, ligne 2 : 4 champs attendus, 2 trouves [Tiramisu;5.5]
+Le menu n'a pas ete modifie par les lectures ratees : 3 plats (comme avant)

@@ -1,0 +1,35 @@
+
+==================== Q3 - SERIALISATION (.ser) ====================
+Pizza Margherita ajoute au menu de Chez Mario
+Pasta Carbonara ajoute au menu de Chez Mario
+Chez Mario a recu la commande #9000
+Sushi saumon ajoute au menu de Sushi Tokyo
+
+>>> 1. Objets AVANT serialisation
+ * Chez Mario [Paris 16] - note : 4.25/5 - commandes recues (transient) : 1
+     - Pizza Margherita : 12.5 EUR (Tomate, mozzarella, basilic) [allergenes : gluten, lactose]
+     - Pasta Carbonara : 10.0 EUR (Lardons, oeuf, parmesan) [allergenes : gluten, oeuf, lactose]
+ * Sushi Tokyo [Paris 16] - note : pas encore note - commandes recues (transient) : 0
+     - Sushi saumon : 9.0 EUR (Riz, saumon) [allergenes : poisson]
+
+>>> 2. SERIALISATION dans data/restaurants.ser
+2 restaurant(s) serialise(s) dans data/restaurants.ser
+Taille du fichier : 872 octets (binaire)
+
+>>> 3. DESERIALISATION et affichage des objets recuperes
+2 restaurant(s) deserialise(s) depuis data/restaurants.ser
+ * Chez Mario [Paris 16] - note : 4.25/5 - commandes recues (transient) : 0
+     - Pizza Margherita : 12.5 EUR (Tomate, mozzarella, basilic) [allergenes : gluten, lactose]
+     - Pasta Carbonara : 10.0 EUR (Lardons, oeuf, parmesan) [allergenes : gluten, oeuf, lactose]
+ * Sushi Tokyo [Paris 16] - note : pas encore note - commandes recues (transient) : 0
+     - Sushi saumon : 9.0 EUR (Riz, saumon) [allergenes : poisson]
+Meme objet en memoire (==) ? false   -> c'est une COPIE
+Meme nom ? true
+Note du plat 'Pizza Margherita' : 5.0/5 (conservee)
+Le champ transient nbCommandesRecues : 1 avant, 0 apres (non sauvegarde)
+
+>>> 4. Classe NON Serializable (NotSerializableException)
+Attrape : la classe Client n'implemente pas Serializable
+
+>>> 5. Fichier .ser corrompu (StreamCorruptedException)
+Attrape (StreamCorruptedException) : invalid stream header: 63656369

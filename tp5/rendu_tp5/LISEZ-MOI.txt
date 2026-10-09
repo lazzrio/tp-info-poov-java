@@ -1,0 +1,28 @@
+TP5 FastBite - Exceptions / Fichier / Serialisation
+=====================================================
+
+A FAIRE AVANT LE DEPOT (BoostCamp) :
+ 1. Remplacer [Prenom NOM 1/2/3] sur la couverture (slide 1) par les vrais noms de l'equipe.
+ 2. Renommer les fichiers : TP5_FastBite_NOM1_NOM2_NOM3.pptx / .pdf avec TOUS les noms
+    (sinon penalite de 0 selon le sujet).
+ 3. Relire les notes du presentateur (PowerPoint > Affichage > Notes) : oral de 5 min.
+
+CONTENU
+ - TP5_FastBite_NOM1_NOM2_NOM3.pptx / .pdf : presentation de 10 slides (notes d'oral incluses)
+ - captures/ : 14 captures PNG (code colore, consoles, fichier .txt, fichier .ser en hexa)
+ - uml/      : TP5_Q1/Q2/Q3 (.drawio modifiable + PNG) = NOTRE ancien diagramme TP4 (TP4_Deliveroo_Q2_corrige.drawio)
+               complete avec les ajouts TP5 ; TP4_Q2_base_ancien_diagramme.* = l'ancien diagramme (avant) ;
+               alternative_vue_fleches/ = autre version (fleches «throws» vers les exceptions)
+ - ../tp5_fastbite/ : projet Java complet
+     src/     code (TP4 + modifications TP5)     tests/TestsTP5.java
+     data/    fichiers produits (.txt, .ser)     sorties/ sorties console
+     outils/  scripts qui regenerent captures, UML et presentation
+
+LANCER LE PROGRAMME (depuis tp5_fastbite/)
+   javac -encoding UTF-8 -d out src/*.java
+   java -cp out Main        (ou : Main q1 / q2 / q3)
+   javac -encoding UTF-8 -cp out -d out tests/TestsTP5.java
+   java -cp out TestsTP5
+
+NOTE : les captures sont des rendus fideles du vrai code et des vraies sorties
+(generes par navigateur), pas des captures d'ecran IntelliJ.

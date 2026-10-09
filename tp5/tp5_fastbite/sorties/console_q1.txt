@@ -1,0 +1,82 @@
+
+==================== Q1 - EXCEPTIONS ====================
+
+>>> A. Scenario TP3 + TP4 (propagation + catch sur la classe mere)
+Pizza Margherita ajoute au menu de Chez Mario
+Pasta Carbonara ajoute au menu de Chez Mario
+--- Sequence 1 : passer une commande ---
+Alice passe la commande #1001 chez Chez Mario
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #1001
+  + Pasta Carbonara (10.0 EUR) ajoute a la commande #1001
+Alice (Plus) paye 24.5 EUR sans frais de livraison.
+Commande #1001 validee (total : 24.5 EUR)
+Chez Mario a recu la commande #1001
+--- Sequence 2 : affectation et preparation ---
+Livraison generee pour la commande #1001
+Bob (scooter) accepte la livraison #1001
+Chez Mario prepare la commande #1001
+--- Sequence 3 : retirer et livrer la commande ---
+Livraison #1001 demarree a 18h30 (arrivee dans 20 min).
+Alice consulte le statut : EN_ROUTE
+Bob a livre la commande #1001
+Livraison #1001 terminee a 18h50.
+--- Sequence 4 : accepter ou refuser une mission ---
+Alice passe la commande #1002 chez Chez Mario
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #1002
+Commande #1002 validee (total : 12.5 EUR)
+Livraison generee pour la commande #1002
+Bob (scooter) accepte la livraison #1002
+--- Bilan TP3 ---
+Alice note Bob : 5.0/5
+Note moyenne de Bob : 5.0
+Client : Alice | adresse : 5 avenue Foch | Plus : true
+Livreur : Bob | vehicule : scooter | disponible : false
+--- TP4 Q1 : meme interface Evaluable pour trois classes ---
+Livreur : 4.5/5
+Plat : 4.5/5
+Restaurant : 4.5/5
+--- TP4 Q3 : collection et tri des paniers ---
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #2001
+  + Pasta Carbonara (10.0 EUR) ajoute a la commande #2001
+  + Pasta Carbonara (10.0 EUR) ajoute a la commande #2002
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #2003
+Panier #2002 : 10,00 EUR (1 plat(s))
+Panier #2003 : 12,50 EUR (1 plat(s))
+Panier #2001 : 22,50 EUR (2 plat(s))
+Pizza Margherita ajoute au menu de Chez Mario
+Pasta Carbonara ajoute au menu de Chez Mario
+
+>>> B1. Note invalide (NoteInvalideException)
+Attrape : Note invalide : 7.5 (attendu entre 0.0 et 5.0)
+
+>>> B2. Moyenne sans aucune note (AucuneNoteException)
+Attrape : Aucune note enregistree pour le livreur Bob : moyenne impossible
+
+>>> B3. Plat absent du menu (PlatIndisponibleException)
+Alice passe la commande #2001 chez Chez Mario
+Attrape : Le plat "Sushi saumon" n'est pas au menu de Chez Mario
+
+>>> B4. Commande vide : validation et paiement impossibles
+Attrape : La commande #2001 est vide : validation impossible
+Attrape : Paiement impossible pour la commande #2001 : la commande est vide
+
+>>> B5. Livreur deja occupe (LivreurIndisponibleException) + finally
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #2001
+Livraison generee pour la commande #2001
+Bob (scooter) accepte la livraison #2001
+Alice passe la commande #2002 chez Chez Mario
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #2002
+Livraison generee pour la commande #2002
+Attrape : Le livreur Bob n'est pas disponible
+finally : execute dans tous les cas (exception ou non)
+
+>>> B6. Livraison dans un etat incoherent (EtatLivraisonException)
+Attrape : Livraison #2002 : impossible de terminer la livraison (statut actuel : EN_ATTENTE)
+
+>>> B7. Capacite depassee : 21e plat dans un menu de 20 (CapaciteDepasseeException)
+Attrape : Capacite depassee : le menu de Resto plein ne peut pas contenir plus de 20 elements
+Plats effectivement ajoutes : 20
+
+>>> B8. Exceptions NON verifiees (IllegalArgumentException) : bugs du code appelant
+Attrape : le plat ne peut pas etre null
+Attrape : Plat manquant.

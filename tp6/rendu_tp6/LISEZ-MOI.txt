@@ -1,0 +1,29 @@
+TP6 FastBite - Interface graphique Swing / Listeners
+=====================================================
+
+A FAIRE AVANT LE DEPOT (BoostCamp) :
+ 1. Remplacer [Prenom NOM 1/2/3] sur la couverture (slide 1) par les vrais noms de l'equipe.
+ 2. Renommer TP6_FastBite_NOM1_NOM2_NOM3.pptx / .pdf avec TOUS les noms (sinon 0 selon le sujet).
+ 3. Slide 10 : indiquer le pourcentage d'aide de l'IA demande par le sujet.
+ 4. Relire les notes du presentateur (oral de 5 min).
+
+CONTENU
+ - TP6_FastBite_NOM1_NOM2_NOM3.pptx / .pdf : presentation de 10 slides (notes d'oral incluses)
+ - captures/ : maquette (q1), storyboard (q2), fenetres et code (q3), listeners, exceptions, fichiers (q4)
+ - ../tp6_fastbite/ : projet Java (code du TP5 + 6 classes d'interface)
+     src/FastBiteGUI.java      point d'entree
+     src/FenetreAccueil.java   page 1 : restaurants, sauvegarde / chargement .ser
+     src/FenetreMenu.java      page 2 : menu, panier, fichier .txt
+     src/FenetreCommande.java  page 3 : recapitulatif, pourboire, note, paiement
+     src/Donnees.java, src/Messages.java   donnees partagees, boites de dialogue
+     tests/TestsTP6.java       simule les clics, 27 verifications, produit les images des fenetres
+
+LANCER (depuis tp6_fastbite/)
+   javac -encoding UTF-8 -d out src/*.java
+   java -cp out FastBiteGUI
+   javac -encoding UTF-8 -cp out -d out tests/TestsTP6.java
+   java -cp out TestsTP6 ../rendu_tp6/captures
+
+NOTE : les images des fenetres sont produites par le programme de test (contenu reel rendu par
+Swing, barre de titre dessinee), pas des captures d'ecran de Windows. La maquette et le storyboard
+sont des pages generees par IA puis converties en image.
