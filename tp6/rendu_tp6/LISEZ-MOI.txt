@@ -10,13 +10,14 @@ A FAIRE AVANT LE DEPOT (BoostCamp) :
 CONTENU
  - TP6_FastBite_NOM1_NOM2_NOM3.pptx / .pdf : presentation de 10 slides (notes d'oral incluses)
  - captures/ : maquette (q1), storyboard (q2), fenetres et code (q3), listeners, exceptions, fichiers (q4)
- - ../tp6_fastbite/ : projet Java (code du TP5 + 6 classes d'interface)
+ - ../tp6_fastbite/ : projet Java (code du TP5 + 7 classes d'interface)
      src/FastBiteGUI.java      point d'entree
      src/FenetreAccueil.java   page 1 : restaurants, sauvegarde / chargement .ser
      src/FenetreMenu.java      page 2 : menu, panier, fichier .txt
-     src/FenetreCommande.java  page 3 : recapitulatif, pourboire, note, paiement
+     src/FenetreCommande.java  page 3 : recapitulatif, paiement, suivi du livreur, notes
      src/Donnees.java, src/Messages.java   donnees partagees, boites de dialogue
-     tests/TestsTP6.java       simule les clics, 27 verifications, produit les images des fenetres
+     src/Style.java            charte graphique : couleurs, boutons arrondis, cartes (paintComponent)
+     tests/TestsTP6.java       simule les clics, 39 verifications, produit les images des fenetres
 
 LANCER (depuis tp6_fastbite/)
    javac -encoding UTF-8 -d out src/*.java

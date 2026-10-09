@@ -1,5 +1,5 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -7,17 +7,15 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
 
 /*
- TP6 - Page 1 : accueil. Liste des restaurants + sauvegarde / chargement (.ser).
+ TP6 - Page 1 : accueil. Une carte par restaurant + sauvegarde / chargement (.ser)
+ + notre livreur et le suivi de la commande en cours.
  La classe HERITE de JFrame (c'est une fenetre) et IMPLEMENTE ActionListener :
  elle ecoute elle-meme les clics de ses boutons dans actionPerformed().
  */
@@ -25,72 +23,122 @@ public class FenetreAccueil extends JFrame implements ActionListener {
     private final Donnees donnees;
 
     // Composants dont on a besoin dans les listeners (donc en attributs)
-    private final DefaultListModel<String> modeleListe = new DefaultListModel<String>();
-    private final JList<String> listeRestaurants = new JList<String>(modeleListe);
-    private final JButton boutonMenu = new JButton("Voir le menu");
-    private final JButton boutonSauver = new JButton("Sauvegarder (.ser)");
-    private final JButton boutonCharger = new JButton("Charger (.ser)");
-    private final JButton boutonQuitter = new JButton("Quitter");
-    private final JLabel etat = new JLabel("Choisissez un restaurant puis « Voir le menu ».");
+    private final JPanel grille = Style.groupe(new GridLayout(0, 3, 16, 16));     // 3 cartes par ligne
+    private final ArrayList<JButton> boutonsMenu = new ArrayList<JButton>();      // un bouton par carte
+    private final JButton boutonSauver = Style.boutonContour("Sauvegarder (.ser)");
+    private final JButton boutonCharger = Style.boutonContour("Charger (.ser)");
+    private final JButton boutonQuitter = Style.boutonContour("Quitter");
+    private final JButton boutonSuivi = Style.boutonOrange("Suivre ma commande");
+    private final JLabel compteur = Style.texte(" ", Font.PLAIN, 14, Style.GRIS);
+    private final JLabel ligneLivreur = Style.texte(" ", Font.PLAIN, 13, Style.GRIS);
+    private final JLabel etat = Style.texte("Choisissez un restaurant.", Font.PLAIN, 13, Style.GRIS);
 
     public FenetreAccueil(Donnees donnees) {
         super("FastBite - Restaurants");          // titre de la fenetre
         this.donnees = donnees;
 
-        // --- NORD : titre et client connecte
-        JLabel titre = new JLabel("FastBite", JLabel.CENTER);
-        titre.setFont(new Font("SansSerif", Font.BOLD, 28));
-        titre.setForeground(new Color(232, 93, 4));
-        JLabel sousTitre = new JLabel("Connecte : " + donnees.getClient().getNom()
-                + "  -  livraison : " + donnees.getClient().getAdresseLivraison(), JLabel.CENTER);
-        JPanel nord = new JPanel(new GridLayout(2, 1));
-        nord.add(titre);
-        nord.add(sousTitre);
+        // --- NORD : barre blanche (logo, adresse de livraison, boutons de fichier)
+        JPanel droite = Style.groupe(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        droite.add(boutonSauver);
+        droite.add(boutonCharger);
+        droite.add(boutonQuitter);
+        JPanel nord = new JPanel(new BorderLayout(24, 0));
+        nord.setBackground(Style.BLANC);
+        nord.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, Style.GRIS_CLAIR),
+                BorderFactory.createEmptyBorder(12, 22, 12, 22)));
+        nord.add(Style.logo(26), BorderLayout.WEST);
+        nord.add(Style.texte("Livrer à : " + donnees.getClient().getAdresseLivraison()
+                + "   ·   " + donnees.getClient().getNom(), Font.PLAIN, 14, Style.GRIS), BorderLayout.CENTER);
+        nord.add(droite, BorderLayout.EAST);
 
-        // --- CENTRE : liste des restaurants (une seule selection a la fois)
-        listeRestaurants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        listeRestaurants.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        JScrollPane centre = new JScrollPane(listeRestaurants);
-        centre.setBorder(BorderFactory.createTitledBorder("Restaurants disponibles"));
+        // --- CENTRE : titre puis grille de cartes (GridLayout = cases de meme taille)
+        JPanel titres = Style.groupe(new GridLayout(2, 1, 0, 2));
+        titres.add(Style.texte("Restaurants près de chez vous", Font.BOLD, 24, Style.NOIR));
+        titres.add(compteur);
+        JPanel enveloppe = Style.groupe(new BorderLayout());
+        enveloppe.add(grille, BorderLayout.NORTH);            // au nord : les cartes gardent leur hauteur
+        JScrollPane defilement = new JScrollPane(enveloppe);  // barre de defilement s'il y a beaucoup de restaurants
+        defilement.setBorder(BorderFactory.createEmptyBorder());
+        defilement.setViewportBorder(null);
+        defilement.setOpaque(false);
+        defilement.getViewport().setOpaque(false);
+        defilement.getVerticalScrollBar().setUnitIncrement(16);
 
-        // --- EST : colonne de boutons (GridLayout = cases de meme taille)
-        JPanel est = new JPanel(new GridLayout(4, 1, 0, 8));
-        est.add(boutonMenu);
-        est.add(boutonSauver);
-        est.add(boutonCharger);
-        est.add(boutonQuitter);
-
-        // --- SUD : barre d'etat (resultat de la derniere action)
-        etat.setBorder(BorderFactory.createEmptyBorder(6, 4, 2, 4));
+        // --- SUD : notre livreur, la commande en cours, puis la barre d'etat
+        Style.Carte carteLivreur = new Style.Carte(new BorderLayout(14, 0));
+        JPanel textesLivreur = Style.groupe(new GridLayout(2, 1, 0, 2));
+        textesLivreur.add(Style.texte("Votre livreur FastBite : " + donnees.getLivreur().getNom(), Font.BOLD, 15, Style.NOIR));
+        textesLivreur.add(ligneLivreur);
+        ligneLivreur.setIcon(new Style.Etoile(13));
+        carteLivreur.add(new Style.Avatar(donnees.getLivreur().getNom(), Style.NOIR, 42), BorderLayout.WEST);
+        carteLivreur.add(textesLivreur, BorderLayout.CENTER);
+        carteLivreur.add(boutonSuivi, BorderLayout.EAST);
+        JPanel sud = Style.groupe(new BorderLayout(0, 8));
+        sud.add(carteLivreur, BorderLayout.CENTER);
+        sud.add(etat, BorderLayout.SOUTH);
 
         // BorderLayout : 5 zones (NORTH, CENTER, EAST, SOUTH, WEST)
-        JPanel contenu = new JPanel(new BorderLayout(10, 10));
-        contenu.setBorder(BorderFactory.createEmptyBorder(12, 12, 8, 12));
+        JPanel centre = new JPanel(new BorderLayout(0, 14));
+        centre.setBackground(Style.FOND);
+        centre.setBorder(BorderFactory.createEmptyBorder(18, 22, 10, 22));
+        centre.add(titres, BorderLayout.NORTH);
+        centre.add(defilement, BorderLayout.CENTER);
+        centre.add(sud, BorderLayout.SOUTH);
+        JPanel contenu = new JPanel(new BorderLayout());
         contenu.add(nord, BorderLayout.NORTH);
         contenu.add(centre, BorderLayout.CENTER);
-        contenu.add(est, BorderLayout.EAST);
-        contenu.add(etat, BorderLayout.SOUTH);
         setContentPane(contenu);
 
-        // --- LISTENERS : la fenetre s'abonne aux clics des 4 boutons
-        boutonMenu.addActionListener(this);
+        // --- LISTENERS : la fenetre s'abonne aux clics de ses boutons
         boutonSauver.addActionListener(this);
         boutonCharger.addActionListener(this);
         boutonQuitter.addActionListener(this);
+        boutonSuivi.addActionListener(this);
 
         rafraichir();
-        setSize(640, 400);
+        setSize(1000, 660);
         setLocationRelativeTo(null);              // centre de l'ecran
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    // Recopie la liste des restaurants (modele) dans la JList (vue)
+    // Une carte = banniere + nom + note / nombre de plats / adresse + bouton « Voir le menu »
+    private JPanel carteRestaurant(Restaurant r, int indice) {
+        JLabel details = Style.texte(Style.note(r) + "   ·   " + r.getNbPlats() + " plat(s)   ·   "
+                + r.getAdresse(), Font.PLAIN, 13, Style.GRIS);
+        details.setIcon(new Style.Etoile(13));
+        JPanel infos = Style.groupe(new GridLayout(2, 1, 0, 2));
+        infos.add(Style.texte(r.getNom(), Font.BOLD, 17, Style.NOIR));
+        infos.add(details);
+
+        JButton bouton = Style.boutonNoir("Voir le menu");
+        bouton.addActionListener(this);           // meme listener pour toutes les cartes
+        boutonsMenu.add(bouton);                  // sa position dans la liste = numero du restaurant
+
+        Style.Carte carte = new Style.Carte(new BorderLayout(0, 10));
+        carte.add(new Style.Banniere(r.getNom(), r.getZoneLivraison(), 120, false, indice), BorderLayout.NORTH);
+        carte.add(infos, BorderLayout.CENTER);
+        carte.add(bouton, BorderLayout.SOUTH);
+        return carte;
+    }
+
+    // Reconstruit l'affichage (vue) a partir des donnees (modele)
     public void rafraichir() {
-        modeleListe.clear();
-        for (Restaurant r : donnees.getRestaurants()) {
-            modeleListe.addElement(r.getNom() + "   -   " + r.getZoneLivraison()
-                    + "   -   " + r.getNbPlats() + " plat(s)");
+        grille.removeAll();
+        boutonsMenu.clear();
+        ArrayList<Restaurant> liste = donnees.getRestaurants();
+        for (int i = 0; i < liste.size(); i++) {
+            grille.add(carteRestaurant(liste.get(i), i));
         }
+        compteur.setText(liste.size() + " restaurant(s) livrent en ce moment");
+
+        Livreur l = donnees.getLivreur();
+        Commande suivie = donnees.getCommandeSuivie();
+        ligneLivreur.setText(Style.note(l) + "   ·   " + l.getVehicule() + "   ·   "
+                + (suivie == null ? "disponible" : "en livraison (commande #" + suivie.getNumero() + ")"));
+        boutonSuivi.setVisible(suivie != null);   // le bouton n'apparait que s'il y a une livraison en cours
+        grille.revalidate();                      // recalcule la mise en page
+        repaint();
     }
 
     /*
@@ -99,26 +147,24 @@ public class FenetreAccueil extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == boutonMenu) {
-            ouvrirMenu();
+        int indice = boutonsMenu.indexOf(source);     // -1 si ce n'est pas un bouton « Voir le menu »
+        if (indice >= 0) {
+            ouvrirMenu(indice);
         } else if (source == boutonSauver) {
             sauvegarder();
         } else if (source == boutonCharger) {
             charger();
+        } else if (source == boutonSuivi) {
+            ouvrirSuivi();
         } else if (source == boutonQuitter) {
             dispose();
         }
     }
 
-    // Navigation : page 1 -> page 2 (menu du restaurant selectionne)
-    private void ouvrirMenu() {
-        int i = listeRestaurants.getSelectedIndex();
-        if (i < 0) {
-            Messages.erreur(this, "Aucun restaurant", "Selectionnez d'abord un restaurant dans la liste.");
-            return;
-        }
+    // Navigation : page 1 -> page 2 (menu du restaurant de la carte cliquee)
+    private void ouvrirMenu(int indice) {
         try {
-            FenetreMenu page = new FenetreMenu(this, donnees, i);
+            FenetreMenu page = new FenetreMenu(this, donnees, indice);
             page.setVisible(true);
             setVisible(false);                    // on cache l'accueil
         } catch (CapaciteDepasseeException ex) {
@@ -127,11 +173,18 @@ public class FenetreAccueil extends JFrame implements ActionListener {
         }
     }
 
+    // Navigation : page 1 -> page 3 (commande en cours de livraison)
+    private void ouvrirSuivi() {
+        FenetreCommande page = new FenetreCommande(this, donnees, donnees.getCommandeSuivie());
+        page.setVisible(true);
+        setVisible(false);
+    }
+
     // TP5 Q3 reutilise : serialisation de la liste dans un fichier binaire
     private void sauvegarder() {
         try {
             Restaurant.sauvegarderRestaurants(donnees.getRestaurants(), Donnees.FICHIER_SER);
-            etat.setText(donnees.getRestaurants().size() + " restaurant(s) serialise(s) dans " + Donnees.FICHIER_SER);
+            etat.setText(donnees.getRestaurants().size() + " restaurant(s) sérialisé(s) dans " + Donnees.FICHIER_SER);
         } catch (IOException ex) {
             Messages.erreur(this, "Sauvegarde impossible", "Ecriture de " + Donnees.FICHIER_SER + " : " + ex.getMessage());
         }
@@ -153,10 +206,10 @@ public class FenetreAccueil extends JFrame implements ActionListener {
     }
 
     // Accesseurs utilises par les tests (simuler un clic, lire l'etat)
-    public JList<String> getListe()      { return listeRestaurants; }
-    public JButton getBoutonMenu()       { return boutonMenu; }
-    public JButton getBoutonSauver()     { return boutonSauver; }
-    public JButton getBoutonCharger()    { return boutonCharger; }
-    public String getEtat()              { return etat.getText(); }
-    public void setEtat(String texte)    { etat.setText(texte); }
+    public ArrayList<JButton> getBoutonsMenu() { return boutonsMenu; }
+    public JButton getBoutonSauver()           { return boutonSauver; }
+    public JButton getBoutonCharger()          { return boutonCharger; }
+    public JButton getBoutonSuivi()            { return boutonSuivi; }
+    public String getEtat()                    { return etat.getText(); }
+    public void setEtat(String texte)          { etat.setText(texte); }
 }

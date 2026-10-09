@@ -1,26 +1,23 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
 
 /*
- TP6 - Page 2 : menu d'un restaurant et panier du client.
- Listeners : ajouter un plat, valider la commande, enregistrer / charger le menu (.txt), retour.
+ TP6 - Page 2 : menu d'un restaurant (une carte par plat) et panier du client.
+ Listeners : ajouter un plat, commander, enregistrer / charger le menu (.txt), retour.
  */
 public class FenetreMenu extends JFrame implements ActionListener {
     private final FenetreAccueil accueil;
@@ -29,23 +26,16 @@ public class FenetreMenu extends JFrame implements ActionListener {
     private Restaurant restaurant;
     private Commande commande;                // commande en cours (le panier)
 
-    // Tableau du menu : le modele contient les donnees, la JTable les affiche
-    private final DefaultTableModel modeleMenu = new DefaultTableModel(
-            new String[]{"Plat", "Prix (EUR)", "Description", "Allergenes"}, 0) {
-        @Override
-        public boolean isCellEditable(int ligne, int colonne) { return false; }   // lecture seule
-    };
-    private final JTable tableMenu = new JTable(modeleMenu);
-    private final DefaultListModel<String> modelePanier = new DefaultListModel<String>();
-    private final JList<String> listePanier = new JList<String>(modelePanier);
-    private final JLabel total = new JLabel("Total : 0.0 EUR");
-    private final JLabel etat = new JLabel(" ");
+    private final JPanel cartesPlats = Style.groupe(new GridLayout(0, 1, 0, 10));     // une carte par ligne
+    private final ArrayList<JButton> boutonsAjouter = new ArrayList<JButton>();       // un bouton par plat
+    private final JPanel lignesPanier = Style.groupe(new GridLayout(0, 1, 0, 8));
+    private final JLabel total = Style.texte("0,00 €", Font.BOLD, 18, Style.NOIR);
+    private final JLabel etat = Style.texte(" ", Font.PLAIN, 13, Style.GRIS);
 
-    private final JButton boutonAjouter = new JButton("Ajouter au panier");
-    private final JButton boutonValider = new JButton("Valider la commande");
-    private final JButton boutonEnregistrer = new JButton("Enregistrer le menu (.txt)");
-    private final JButton boutonLire = new JButton("Charger un menu (.txt)");
-    private final JButton boutonRetour = new JButton("Retour");
+    private final JButton boutonValider = Style.boutonVert("Commander");
+    private final JButton boutonEnregistrer = Style.boutonContour("Enregistrer le menu (.txt)");
+    private final JButton boutonLire = Style.boutonContour("Charger un menu (.txt)");
+    private final JButton boutonRetour = Style.boutonContour("Retour aux restaurants");
 
     /*
      Le constructeur PROPAGE CapaciteDepasseeException : passerCommande() la leve si
@@ -60,85 +50,126 @@ public class FenetreMenu extends JFrame implements ActionListener {
         this.commande = donnees.getClient().passerCommande(restaurant, donnees.numeroSuivant());
         setTitle("FastBite - Menu de " + restaurant.getNom());
 
-        // --- NORD
-        JLabel titre = new JLabel(restaurant.getNom() + "  -  " + restaurant.getAdresse(), JLabel.CENTER);
-        titre.setFont(new Font("SansSerif", Font.BOLD, 20));
+        // --- NORD : banniere du restaurant, puis note et adresse
+        JLabel details = Style.texte(Style.note(restaurant) + "   ·   " + restaurant.getAdresse()
+                + "   ·   livraison à " + donnees.getClient().getAdresseLivraison(), Font.PLAIN, 14, Style.GRIS);
+        details.setIcon(new Style.Etoile(14));
+        JPanel nord = Style.groupe(new BorderLayout(0, 10));
+        nord.add(new Style.Banniere(restaurant.getNom(), restaurant.getZoneLivraison(), 120, true, indice), BorderLayout.CENTER);
+        nord.add(details, BorderLayout.SOUTH);
 
-        // --- CENTRE : menu a gauche, panier a droite
-        tableMenu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableMenu.setRowHeight(24);
-        int[] largeurs = {150, 95, 200, 150};           // largeur de depart de chaque colonne
-        for (int c = 0; c < largeurs.length; c++) {
-            tableMenu.getColumnModel().getColumn(c).setPreferredWidth(largeurs[c]);
-        }
-        JScrollPane gauche = new JScrollPane(tableMenu);
-        gauche.setBorder(BorderFactory.createTitledBorder("Menu"));
+        // --- CENTRE : les plats (avec defilement)
+        JPanel enveloppe = Style.groupe(new BorderLayout());
+        enveloppe.add(cartesPlats, BorderLayout.NORTH);
+        JScrollPane defilement = new JScrollPane(enveloppe);
+        defilement.setBorder(BorderFactory.createEmptyBorder());
+        defilement.setViewportBorder(null);
+        defilement.setOpaque(false);
+        defilement.getViewport().setOpaque(false);
+        defilement.getVerticalScrollBar().setUnitIncrement(16);
 
-        total.setFont(new Font("SansSerif", Font.BOLD, 16));
-        JPanel droite = new JPanel(new BorderLayout(4, 4));
-        droite.setBorder(BorderFactory.createTitledBorder("Panier - commande #" + commande.getNumero()));
-        droite.add(new JScrollPane(listePanier), BorderLayout.CENTER);
-        droite.add(total, BorderLayout.SOUTH);
+        // --- EST : le panier (carte blanche de largeur fixe)
+        JPanel titrePanier = Style.groupe(new GridLayout(2, 1, 0, 2));
+        titrePanier.add(Style.texte("Votre panier", Font.BOLD, 19, Style.NOIR));
+        titrePanier.add(Style.texte("Commande #" + commande.getNumero() + "   ·   " + donnees.getClient().getNom(),
+                Font.PLAIN, 13, Style.GRIS));
+        JPanel hautPanier = Style.groupe(new BorderLayout());
+        hautPanier.add(lignesPanier, BorderLayout.NORTH);
+        JPanel ligneTotal = Style.groupe(new BorderLayout());
+        ligneTotal.add(Style.texte("Total", Font.BOLD, 18, Style.NOIR), BorderLayout.CENTER);
+        ligneTotal.add(total, BorderLayout.EAST);
+        JPanel basPanier = Style.groupe(new GridLayout(2, 1, 0, 10));
+        basPanier.add(ligneTotal);
+        basPanier.add(boutonValider);
+        Style.Carte panier = new Style.Carte(new BorderLayout(0, 14));
+        panier.setPreferredSize(new Dimension(330, 100));
+        panier.add(titrePanier, BorderLayout.NORTH);
+        panier.add(hautPanier, BorderLayout.CENTER);
+        panier.add(basPanier, BorderLayout.SOUTH);
 
-        JPanel centre = new JPanel(new GridLayout(1, 2, 10, 0));
-        centre.add(gauche);
-        centre.add(droite);
-
-        // --- SUD : boutons (FlowLayout = a la suite, de gauche a droite) puis barre d'etat
-        JPanel boutons = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 4));
-        boutons.add(boutonAjouter);
-        boutons.add(boutonValider);
+        // --- SUD : boutons secondaires (FlowLayout = a la suite, de gauche a droite) et barre d'etat
+        JPanel boutons = Style.groupe(new FlowLayout(FlowLayout.LEFT, 8, 0));
+        boutons.add(boutonRetour);
         boutons.add(boutonEnregistrer);
         boutons.add(boutonLire);
-        boutons.add(boutonRetour);
-        JPanel sud = new JPanel(new GridLayout(2, 1));
-        sud.add(boutons);
-        sud.add(etat);
+        JPanel sud = Style.groupe(new BorderLayout(12, 0));
+        sud.add(boutons, BorderLayout.WEST);
+        sud.add(etat, BorderLayout.CENTER);
 
-        JPanel contenu = new JPanel(new BorderLayout(10, 10));
-        contenu.setBorder(BorderFactory.createEmptyBorder(12, 12, 8, 12));
-        contenu.add(titre, BorderLayout.NORTH);
-        contenu.add(centre, BorderLayout.CENTER);
+        JPanel contenu = new JPanel(new BorderLayout(16, 14));
+        contenu.setBackground(Style.FOND);
+        contenu.setBorder(BorderFactory.createEmptyBorder(16, 22, 12, 22));
+        contenu.add(nord, BorderLayout.NORTH);
+        contenu.add(defilement, BorderLayout.CENTER);
+        contenu.add(panier, BorderLayout.EAST);
         contenu.add(sud, BorderLayout.SOUTH);
         setContentPane(contenu);
 
         // --- LISTENERS
-        boutonAjouter.addActionListener(this);
         boutonValider.addActionListener(this);
         boutonEnregistrer.addActionListener(this);
         boutonLire.addActionListener(this);
         boutonRetour.addActionListener(this);
 
         remplirMenu();
-        setSize(1000, 430);
+        rafraichirPanier();
+        setSize(1000, 660);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    // Recopie le menu du restaurant dans le tableau
+    // Une carte par plat du restaurant : nom, description, allergenes, prix, bouton « Ajouter »
     private void remplirMenu() {
-        modeleMenu.setRowCount(0);
+        cartesPlats.removeAll();
+        boutonsAjouter.clear();
         for (int i = 0; i < restaurant.getNbPlats(); i++) {
             Plat p = restaurant.getMenu()[i];
-            modeleMenu.addRow(new Object[]{p.getNom(), p.getPrix(), p.getDescription(),
-                    String.join(", ", p.getAllergenes())});
+            String allergenes = (p.getAllergenes().length == 0) ? "Sans allergène déclaré"
+                    : "Allergènes : " + String.join(", ", p.getAllergenes());
+            JPanel textes = Style.groupe(new GridLayout(3, 1, 0, 2));
+            textes.add(Style.texte(p.getNom(), Font.BOLD, 16, Style.NOIR));
+            textes.add(Style.texte(p.getDescription(), Font.PLAIN, 13, Style.GRIS));
+            textes.add(Style.texte(allergenes, Font.ITALIC, 12, Style.GRIS));
+
+            JButton bouton = Style.boutonOrange("Ajouter");
+            bouton.addActionListener(this);
+            boutonsAjouter.add(bouton);           // position dans la liste = numero du plat dans le menu
+            JLabel prix = Style.texte(Style.prix(p.getPrix()), Font.BOLD, 16, Style.NOIR);
+            prix.setHorizontalAlignment(JLabel.RIGHT);
+            JPanel droite = Style.groupe(new GridLayout(2, 1, 0, 6));
+            droite.add(prix);
+            droite.add(bouton);
+
+            Style.Carte carte = new Style.Carte(new BorderLayout(14, 0));
+            carte.add(textes, BorderLayout.CENTER);
+            carte.add(droite, BorderLayout.EAST);
+            cartesPlats.add(carte);
         }
+        cartesPlats.revalidate();
+        repaint();
     }
 
-    // Recopie les plats de la commande dans la liste du panier et recalcule le total
+    // Recopie les plats de la commande dans le panier et recalcule le total
     private void rafraichirPanier() {
-        modelePanier.clear();
-        for (Plat p : commande.getPlats()) {
-            modelePanier.addElement(p.toString());
+        lignesPanier.removeAll();
+        if (commande.getNbPlats() == 0) {
+            lignesPanier.add(Style.texte("Votre panier est vide.", Font.PLAIN, 14, Style.GRIS));
+            lignesPanier.add(Style.texte("Ajoutez un plat pour commencer.", Font.PLAIN, 13, Style.GRIS));
         }
-        total.setText("Total : " + commande.calculerTotal() + " EUR");
+        for (Plat p : commande.getPlats()) {
+            lignesPanier.add(Style.ligne(p.getNom(), Style.prix(p.getPrix()), Font.PLAIN, 14));
+        }
+        total.setText(Style.prix(commande.calculerTotal()));
+        lignesPanier.revalidate();
+        repaint();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if (source == boutonAjouter) {
-            ajouterAuPanier();
+        int numero = boutonsAjouter.indexOf(source);      // -1 si ce n'est pas un bouton « Ajouter »
+        if (numero >= 0) {
+            ajouterAuPanier(numero);
         } else if (source == boutonValider) {
             validerCommande();
         } else if (source == boutonEnregistrer) {
@@ -154,23 +185,19 @@ public class FenetreMenu extends JFrame implements ActionListener {
         }
     }
 
-    // Clic « Ajouter au panier » : le plat selectionne dans le tableau rejoint la commande
-    private void ajouterAuPanier() {
-        int ligne = tableMenu.getSelectedRow();
-        if (ligne < 0) {
-            Messages.erreur(this, "Aucun plat", "Selectionnez d'abord un plat dans le menu.");
-            return;
-        }
+    // Clic « Ajouter » sur la carte d'un plat : ce plat rejoint la commande
+    private void ajouterAuPanier(int numero) {
+        Plat plat = restaurant.getMenu()[numero];
         try {
-            commande.ajouterPlat(restaurant.getMenu()[ligne]);
+            commande.ajouterPlat(plat);
             rafraichirPanier();                                   // mise a jour de l'affichage
-            etat.setText(restaurant.getMenu()[ligne].getNom() + " ajoute au panier.");
+            etat.setText(plat.getNom() + " ajouté au panier.");
         } catch (PlatIndisponibleException ex) {
             Messages.erreur(this, "Plat indisponible", ex.getMessage());
         }
     }
 
-    // Clic « Valider » : CommandeVideException si le panier est vide, sinon page 3
+    // Clic « Commander » : CommandeVideException si le panier est vide, sinon page 3
     private void validerCommande() {
         try {
             commande.valider();
@@ -188,7 +215,7 @@ public class FenetreMenu extends JFrame implements ActionListener {
         String fichier = Donnees.fichierMenu(restaurant);
         try {
             restaurant.sauvegarderMenu(fichier);
-            etat.setText("Menu enregistre dans " + fichier + " (" + restaurant.getNbPlats() + " plats).");
+            etat.setText("Menu enregistré dans " + fichier + " (" + restaurant.getNbPlats() + " plats).");
         } catch (IOException ex) {
             Messages.erreur(this, "Enregistrement impossible", ex.getMessage());
         }
@@ -226,12 +253,11 @@ public class FenetreMenu extends JFrame implements ActionListener {
     }
 
     // Accesseurs utilises par les tests
-    public JTable getTable()               { return tableMenu; }
-    public JButton getBoutonAjouter()      { return boutonAjouter; }
-    public JButton getBoutonValider()      { return boutonValider; }
-    public JButton getBoutonEnregistrer()  { return boutonEnregistrer; }
-    public JButton getBoutonRetour()       { return boutonRetour; }
-    public Commande getCommande()          { return commande; }
-    public String getEtat()                { return etat.getText(); }
-    public String getTotal()               { return total.getText(); }
+    public ArrayList<JButton> getBoutonsAjouter() { return boutonsAjouter; }
+    public JButton getBoutonValider()             { return boutonValider; }
+    public JButton getBoutonEnregistrer()         { return boutonEnregistrer; }
+    public JButton getBoutonRetour()              { return boutonRetour; }
+    public Commande getCommande()                 { return commande; }
+    public String getEtat()                       { return etat.getText(); }
+    public String getTotal()                      { return total.getText(); }
 }

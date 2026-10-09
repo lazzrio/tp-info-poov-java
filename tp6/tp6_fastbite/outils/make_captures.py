@@ -33,33 +33,42 @@ h1{font-size:26px;margin:18px 28px 2px} .sub{margin:0 28px 14px;color:#666;font-
 .n{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:50%;background:#1f3a5f;color:#fff;font-size:11.5px;font-weight:700;margin-right:5px}
 .leg{margin:16px 28px 0;display:flex;gap:26px;font-size:14px;color:#333} .leg div{flex:1;line-height:1.55}
 .cap{font-size:12.5px;color:#555;margin:6px 2px 0}
+.ban{height:38px;background:#cfcfcf;border-radius:5px} .btn.dark{background:#555;color:#fff;border-radius:14px;margin-top:6px}
+.btn.sm{font-size:11px;padding:4px 7px;border-radius:12px;white-space:nowrap} .btn.sm .n,.btn.dark .n{width:16px;height:16px;font-size:10px}
+.av{display:inline-block;width:20px;height:20px;border-radius:50%;background:#555;flex:none}
+.pill{border:2px solid #444;border-radius:10px;font-size:10.5px;font-weight:700;padding:1px 8px}
+.steps{display:flex;justify-content:space-between;margin:8px 10px;border-top:3px solid #bbb} .steps i{width:12px;height:12px;border-radius:50%;background:#bbb;margin-top:-8px} .steps i.on{background:#555}
 """
 
 
 def ecran_accueil(tag="1"):
+    carte = """<div class="box" style="flex:1;padding:6px"><div class="ban"></div><div class="line sel" style="width:60%"></div><div class="line" style="width:85%"></div><div class="btn dark"><span class="n">a</span>Voir le menu</div></div>"""
     return f"""<div class="scr"><div class="tag">{tag}</div><div class="bar"><span>FastBite - Restaurants</span><span>&ndash; &#9633; &times;</span></div><div class="pad">
-<div class="ttl">FastBite<br><span style="font-weight:400;font-size:13px">Connecté : client &middot; adresse de livraison</span></div>
-<div class="fl"><div class="box lst" style="flex:1"><b style="font-size:12.5px">Restaurants disponibles</b><div class="line sel"></div><div class="line"></div><div class="line" style="width:70%"></div></div>
-<div class="col" style="width:150px"><div class="btn"><span class="n">a</span>Voir le menu</div><div class="btn"><span class="n">b</span>Sauvegarder (.ser)</div><div class="btn"><span class="n">c</span>Charger (.ser)</div><div class="btn">Quitter</div></div></div>
+<div class="fl" style="align-items:center;margin-bottom:8px"><b style="font-size:17px">FastBite</b><span style="flex:1;font-size:11.5px;color:#666">Livrer à : adresse</span><div class="btn sm"><span class="n">b</span>Sauvegarder</div><div class="btn sm"><span class="n">c</span>Charger</div><div class="btn sm">Quitter</div></div>
+<b style="font-size:13.5px">Restaurants près de chez vous</b>
+<div class="fl" style="margin-top:6px">{carte}{carte}{carte}</div>
+<div class="box fl" style="margin-top:8px;align-items:center"><span class="av"></span><span style="flex:1">Notre livreur &middot; note &middot; disponible</span><div class="btn sm"><span class="n">l</span>Suivre ma commande</div></div>
 <div class="st">Barre d'état : résultat de la dernière action</div></div></div>"""
 
 
 def ecran_menu(tag="2"):
-    return f"""<div class="scr" style="flex:1.35"><div class="tag">{tag}</div><div class="bar"><span>FastBite - Menu de &lt;restaurant&gt;</span><span>&ndash; &#9633; &times;</span></div><div class="pad">
-<div class="ttl">Nom du restaurant - adresse</div>
-<div class="fl"><div class="box lst" style="flex:1.1"><b style="font-size:12.5px">Menu (tableau : plat | prix | description | allergènes)</b><div class="line sel"></div><div class="line"></div><div class="line"></div></div>
-<div class="box lst" style="flex:1"><b style="font-size:12.5px">Panier - commande n°</b><div class="line" style="width:60%"></div><div class="line" style="width:45%"></div><div style="font-weight:700;margin-top:34px">Total : 0.0 EUR</div></div></div>
-<div class="fl" style="margin-top:10px;flex-wrap:wrap"><div class="btn" style="flex:1"><span class="n">d</span>Ajouter au panier</div><div class="btn" style="flex:1"><span class="n">e</span>Valider</div><div class="btn" style="flex:1.2"><span class="n">f</span>Enregistrer (.txt)</div><div class="btn" style="flex:1.2"><span class="n">g</span>Charger (.txt)</div><div class="btn" style="flex:.7">Retour</div></div>
+    plat = """<div class="box fl" style="align-items:center;margin-bottom:6px"><div style="flex:1"><div class="line sel" style="width:45%;margin-top:2px"></div><div class="line" style="width:75%"></div></div><div style="width:86px"><div style="text-align:right;font-weight:700">prix</div><div class="btn sm"><span class="n">d</span>Ajouter</div></div></div>"""
+    return f"""<div class="scr" style="flex:1.2"><div class="tag">{tag}</div><div class="bar"><span>FastBite - Menu de &lt;restaurant&gt;</span><span>&ndash; &#9633; &times;</span></div><div class="pad">
+<div class="ban" style="height:44px;display:flex;align-items:flex-end;padding:5px 8px;font-weight:700;font-size:14px">Nom du restaurant</div>
+<div class="fl" style="margin-top:8px"><div style="flex:1.35"><b style="font-size:12.5px">Une carte par plat (défilement)</b>{plat}{plat}</div>
+<div class="box" style="flex:1"><b style="font-size:12.5px">Votre panier - commande n°</b><div class="line" style="width:80%"></div><div class="line" style="width:65%"></div><div style="font-weight:700;margin:12px 0 6px">Total : 0,00 €</div><div class="btn dark"><span class="n">e</span>Commander</div></div></div>
+<div class="fl" style="margin-top:10px"><div class="btn sm" style="flex:.8">Retour</div><div class="btn sm" style="flex:1.2"><span class="n">f</span>Enregistrer (.txt)</div><div class="btn sm" style="flex:1.2"><span class="n">g</span>Charger (.txt)</div></div>
 <div class="st">Barre d'état</div></div></div>"""
 
 
 def ecran_commande(tag="3"):
     return f"""<div class="scr"><div class="tag">{tag}</div><div class="bar"><span>FastBite - Commande n°</span><span>&ndash; &#9633; &times;</span></div><div class="pad">
-<div class="ttl">Commande n° chez &lt;restaurant&gt;</div>
-<div class="box" style="height:96px"><b style="font-size:12.5px">Récapitulatif (plats, pourboire, total, statut)</b><div class="line" style="width:55%"></div><div class="line" style="width:40%"></div><div class="line" style="width:48%"></div></div>
-<div class="fl" style="margin-top:9px"><div style="flex:1.3;font-size:13px;padding-top:6px">Pourboire :</div><div class="box" style="flex:1">&nbsp;</div><div class="btn" style="flex:1.2"><span class="n">h</span>Appliquer</div></div>
-<div class="fl" style="margin-top:7px"><div style="flex:1.3;font-size:13px;padding-top:6px">Note (0 à 5) :</div><div class="box" style="flex:1">&nbsp;</div><div class="btn" style="flex:1.2"><span class="n">i</span>Noter</div></div>
-<div class="fl" style="margin-top:7px"><div style="flex:1.3;font-size:13px;padding-top:6px">Moyenne : - / 5</div><div class="btn" style="flex:1"><span class="n">j</span>Payer</div><div class="btn" style="flex:1.2">Accueil</div></div>
+<div class="fl" style="align-items:center;margin-bottom:8px"><b style="font-size:17px">FastBite</b><span style="flex:1;font-size:12.5px;font-weight:600">Commande n° &middot; restaurant</span><span class="pill">STATUT</span></div>
+<div class="fl"><div class="box" style="flex:1"><b style="font-size:12.5px">Récapitulatif</b><div class="line" style="width:80%"></div><div class="line" style="width:65%"></div><div style="font-weight:700;margin:8px 0">Total</div>
+<div class="fl" style="align-items:center"><span style="flex:1;font-size:11.5px">Pourboire</span><div class="box" style="width:34px;padding:3px">&nbsp;</div><div class="btn sm"><span class="n">h</span>Appliquer</div></div><div class="btn dark" style="margin-top:6px"><span class="n">j</span>Payer</div></div>
+<div style="flex:1"><div class="box"><div class="fl" style="align-items:center"><span class="av"></span><b style="font-size:12px">Notre livreur</b></div><div class="steps"><i class="on"></i><i class="on"></i><i></i><i></i></div><div class="btn sm"><span class="n">k</span>Suivre la livraison</div></div>
+<div class="box" style="margin-top:6px"><b style="font-size:12px">Votre avis (0 à 5)</b><div class="fl" style="align-items:center;margin-top:4px"><span style="flex:1;font-size:11.5px">Restaurant</span><div class="box" style="width:30px;padding:3px">&nbsp;</div><div class="btn sm"><span class="n">i</span>Noter</div></div><div class="fl" style="align-items:center;margin-top:4px"><span style="flex:1;font-size:11.5px">Livreur</span><div class="box" style="width:30px;padding:3px">&nbsp;</div><div class="btn sm"><span class="n">m</span>Noter</div></div></div></div></div>
+<div class="fl" style="margin-top:8px"><div class="btn sm">Retour aux restaurants</div></div>
 <div class="st">Barre d'état</div></div></div>"""
 
 
@@ -69,9 +78,9 @@ def wireframes():
 <p class="sub">3 fenêtres Swing : gris = zones, cadres = composants, pastilles bleues = boutons qui auront un listener (Q4).</p>
 <div class="row" style="margin-top:22px">{ecran_accueil()}{ecran_menu()}{ecran_commande()}</div>
 <div class="leg">
-<div><b>1 &middot; Accueil</b> &mdash; JFrame, BorderLayout.<br>JList des restaurants au centre, colonne de JButton à l'est (GridLayout), JLabel d'état au sud.</div>
-<div style="flex:1.35"><b>2 &middot; Menu et panier</b> &mdash; JTable du menu (lecture seule) et JList du panier côte à côte (GridLayout 1&times;2), rangée de JButton (FlowLayout).</div>
-<div><b>3 &middot; Commande</b> &mdash; JTextArea du récapitulatif, formulaire JLabel / JTextField / JButton (GridLayout 3&times;3).</div>
+<div><b>1 &middot; Accueil</b> &mdash; JFrame, BorderLayout.<br>Une carte (JPanel) par restaurant dans un GridLayout à 3 colonnes, barre du haut avec les boutons de fichier, bandeau de notre livreur, JLabel d'état au sud.</div>
+<div style="flex:1.2"><b>2 &middot; Menu et panier</b> &mdash; une carte par plat avec son bouton « Ajouter » (JScrollPane), panier à l'est avec le total et « Commander », boutons secondaires (FlowLayout).</div>
+<div><b>3 &middot; Commande</b> &mdash; deux colonnes (GridLayout 1&times;2) : récapitulatif et paiement à gauche ; livreur, étapes de la livraison et notes (JTextField) à droite.</div>
 </div></body></html>"""
     html_to_png(page, os.path.join(OUT, "q1_wireframes.png"), 1500, 560)
     print("wireframes")
@@ -81,7 +90,7 @@ def storyboard():
     css = WF_CSS + """
 .sb{position:relative;width:1500px;height:800px} .pos{position:absolute} .pos .scr{width:100%}
 .mini .lst{height:100px} .mini .ttl{font-size:15px;margin-bottom:6px} .mini .btn{font-size:11px;padding:4px 2px} .mini .box{font-size:11px}
-.mini .st{display:none} .mini .bar{font-size:12px;padding:4px 8px}
+.mini .st{display:none} .mini .btn.sm{font-size:9.5px;padding:3px 5px;white-space:normal} .mini .btn.sm .n{display:none} .mini .box{padding:5px 6px} .mini .bar{font-size:12px;padding:4px 8px}
 .err{position:absolute;border:2.5px solid #b23a3a;background:#fdeeee;border-radius:6px;padding:8px 10px;font-size:13px;color:#7a1f1f;width:250px}
 .err b{display:block;color:#b23a3a} .file{position:absolute;border:2.5px solid #2f7a4b;background:#eaf6ee;border-radius:6px;padding:8px 10px;font-size:13px;color:#1f5133;width:230px}
 .file b{display:block;color:#2f7a4b} svg{position:absolute;left:0;top:0} .lab{font:600 13px 'Segoe UI',sans-serif;fill:#1f3a5f}
@@ -94,9 +103,9 @@ def storyboard():
 <marker id="a" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="12" refX="15" refY="6" orient="auto"><path d="M0 0 L16 6 L0 12z" fill="#1f3a5f"/></marker>
 <marker id="r" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="12" refX="15" refY="6" orient="auto"><path d="M0 0 L16 6 L0 12z" fill="#b23a3a"/></marker>
 <marker id="g" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="12" refX="15" refY="6" orient="auto"><path d="M0 0 L16 6 L0 12z" fill="#2f7a4b"/></marker></defs>
-<path d="M400 130 H560" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="412" y="120">Voir le menu</text>
-<path d="M560 195 H400" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="452" y="216">Retour</text>
-<path d="M1010 130 H1130" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="1020" y="120">Valider</text>
+<path d="M400 130 H540" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="412" y="120">Voir le menu</text>
+<path d="M540 195 H400" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="452" y="216">Retour</text>
+<path d="M980 130 H1070" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="982" y="120">Commander</text>
 <path d="M1300 345 V410 H230 V298" stroke="#1f3a5f" stroke-width="3" fill="none" marker-end="url(#a)"/><text class="lab" x="980" y="402">Retour à l'accueil (commande payée)</text>
 <path d="M120 296 V500" stroke="#2f7a4b" stroke-width="3" fill="none" marker-end="url(#g)" stroke-dasharray="7 5"/>
 <path d="M700 290 V500" stroke="#2f7a4b" stroke-width="3" fill="none" marker-end="url(#g)" stroke-dasharray="7 5"/>
@@ -105,13 +114,13 @@ def storyboard():
 <path d="M1400 345 V500" stroke="#b23a3a" stroke-width="3" fill="none" marker-end="url(#r)" stroke-dasharray="7 5"/>
 </svg>
 <div class="pos mini" style="left:40px;top:40px;width:360px">{ecran_accueil("1")}</div>
-<div class="pos mini" style="left:560px;top:40px;width:450px">{ecran_menu("2")}</div>
-<div class="pos mini" style="left:1130px;top:40px;width:340px">{ecran_commande("3")}</div>
+<div class="pos mini" style="left:540px;top:40px;width:440px">{ecran_menu("2")}</div>
+<div class="pos mini" style="left:1070px;top:40px;width:400px">{ecran_commande("3")}</div>
 <div class="file" style="left:40px;top:505px"><b>Sauvegarder / Charger (.ser)</b>data/restaurants.ser<br>sérialisation de la liste des restaurants</div>
-<div class="err" style="left:205px;top:645px"><b>Boîte d'erreur</b>aucun restaurant sélectionné &middot; .ser illisible (IOException) &middot; historique plein (CapaciteDepasseeException)</div>
+<div class="err" style="left:205px;top:645px"><b>Boîte d'erreur</b>.ser illisible (IOException) &middot; historique plein (CapaciteDepasseeException)</div>
 <div class="file" style="left:600px;top:505px"><b>Enregistrer / Charger (.txt)</b>data/menu_chez_mario.txt<br>une ligne par plat, séparateur « ; »</div>
 <div class="err" style="left:850px;top:505px;width:230px"><b>Boîte d'erreur</b>panier vide (CommandeVideException) &middot; fichier mal formé (FormatFichierException)</div>
-<div class="err" style="left:1215px;top:505px;width:255px"><b>Boîte d'erreur</b>note hors 0-5 (NoteInvalideException) &middot; texte au lieu d'un nombre &middot; déjà payée (PaiementImpossibleException)</div>
+<div class="err" style="left:1215px;top:505px;width:255px"><b>Boîte d'erreur</b>note hors 0-5 (NoteInvalideException) &middot; texte au lieu d'un nombre &middot; déjà payée (PaiementImpossibleException) &middot; livreur déjà en course (LivreurIndisponibleException)</div>
 </div></body></html>"""
     html_to_png(page, os.path.join(OUT, "q2_storyboard.png"), 1500, 860)
     print("storyboard")
@@ -193,8 +202,10 @@ if __name__ == "__main__":
     # Q3 : construction d'une fenetre
     code_png("q3_code_fenetre", [
         ("FenetreAccueil.java", r"public class FenetreAccueil extends JFrame", r"public class FenetreAccueil extends JFrame"),
-        ("FenetreAccueil.java", r"// --- CENTRE : liste des restaurants", r"setDefaultCloseOperation"),
-    ], width=1120)
+        ("FenetreAccueil.java", r"// --- CENTRE : titre puis grille", r"setUnitIncrement"),
+        ("FenetreAccueil.java", r"// BorderLayout : 5 zones", r"setDefaultCloseOperation"),
+    ], width=1240)
+    code_png("q3_code_style", [("Style.java", r"public static class Bouton extends JButton", r"^    }")], width=1180)
     code_png("q3_code_main", [("FastBiteGUI.java", r"public static void main", r"^    }")], width=1000)
     # Q4 : listeners
     code_png("q4_code_listener", [
@@ -206,6 +217,7 @@ if __name__ == "__main__":
         ("FenetreMenu.java", r"private void validerCommande", r"^    }"),
         ("FenetreCommande.java", r"private void noter\(\)", r"^    }"),
     ], width=1150)
+    code_png("q4_code_livraison", [("FenetreCommande.java", r"private void avancerLivraison", r"^    }")], width=1280)
     code_png("q4_code_fichiers", [
         ("FenetreMenu.java", r"public void chargerMenu\(String fichier\)", r"^    }"),
         ("FenetreAccueil.java", r"private void charger\(\)", r"^    }"),
