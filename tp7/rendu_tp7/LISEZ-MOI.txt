@@ -1,0 +1,31 @@
+TP7 FastBite - Pattern MVC (Modele-Vue-Controleur)
+==================================================
+
+A FAIRE AVANT LE DEPOT (BoostCamp) :
+ 1. Remplacer [Prenom NOM 1/2/3] sur la couverture (slide 1) par les vrais noms de l'equipe.
+ 2. Renommer TP7_FastBite_NOM1_NOM2_NOM3.pptx / .pdf avec TOUS les noms (sinon 0 selon le sujet).
+ 3. Slide 10 : remplacer [ XX % ] par le pourcentage d'aide de l'IA demande par le sujet.
+ 4. Relire les notes du presentateur (oral de 5 min).
+
+CONTENU
+ - TP7_FastBite_NOM1_NOM2_NOM3.pptx / .pdf : presentation de 10 slides (notes d'oral incluses)
+ - captures/ : schema MVC, avant/apres, extraits de code, fenetres, preuve des tests
+ - ../tp7_fastbite/ : projet Java (code du TP6 reorganise en 3 packages)
+     src/modele/      Donnees, Client, Commande, Restaurant, Livreur... + exceptions + EcouteurModele (Observer)
+     src/vue/         FenetreAccueil, FenetreMenu, FenetreCommande, Style, Messages
+     src/controleur/  ControleurApplication, ControleurAccueil, ControleurMenu, ControleurCommande
+     src/FastBiteGUI.java   point d'entree de l'interface ;  src/Main.java  demo console (TP5)
+     tests/TestsTP7.java    simule les clics (273 verifications) + controle des imports de chaque package
+
+LANCER (depuis le dossier tp7_fastbite/, pour que data/ soit trouve)
+   javac -encoding UTF-8 -d out $(find src -name "*.java")        (PowerShell : voir IntelliJ)
+   java -cp out FastBiteGUI
+   javac -encoding UTF-8 -cp out -d out_tests tests/TestsTP7.java
+   java -cp "out;out_tests" TestsTP7 ../rendu_tp7/captures
+ Dans IntelliJ : File > Open > dossier tp7_fastbite ; lancer la classe FastBiteGUI.
+
+NOTES
+ - Les images des fenetres sont produites par le programme de test (contenu reel rendu par Swing,
+   barre de titre dessinee), pas des captures d'ecran de Windows.
+ - Limites assumees (slide 10) : le modele garde des println herites du TP3 ; Style.note() attrape
+   AucuneNoteException pour afficher « Nouveau » (affichage, pas regle metier).

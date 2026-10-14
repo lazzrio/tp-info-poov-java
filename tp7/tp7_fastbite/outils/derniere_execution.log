@@ -1,0 +1,352 @@
+Pizza Margherita ajoute au menu de Chez Mario
+Pasta Carbonara ajoute au menu de Chez Mario
+Eau minerale ajoute au menu de Chez Mario
+California roll ajoute au menu de Yoshi Sushi
+Sashimi saumon ajoute au menu de Yoshi Sushi
+Ramen poulet ajoute au menu de Yoshi Sushi
+Mochi glace ajoute au menu de Yoshi Sushi
+Sushi saumon ajoute au menu de Sushi Tokyo
+Maki avocat ajoute au menu de Sushi Tokyo
+--- Page 1 : accueil
+  ok  3 cartes de restaurants (dont Yoshi Sushi)
+  ok  Yoshi Sushi est dans la liste
+  ok  pas de bouton de suivi sans livraison en cours
+  capture q3_fenetre_accueil.png
+--- Page 2 : menu (listener « Voir le menu » de la carte Chez Mario)
+Alice passe la commande #1 chez Chez Mario
+  ok  la page menu s'ouvre et l'accueil se cache
+  ok  3 cartes de plats
+  capture q3_fenetre_menu.png
+  ok  CommandeVideException attrapee et affichee
+  capture q4_exc_commande_vide.png
+  + Pizza Margherita (12.5 EUR) ajoute a la commande #1
+  + Eau minerale (2.0 EUR) ajoute a la commande #1
+  ok  2 clics « Ajouter » -> total 14,50 EUR
+  capture q4_listener_panier.png
+--- Fichier texte
+Menu de Chez Mario ecrit dans data/menu_chez_mario.txt (3 plats)
+  ok  menu enregistre dans data/menu_chez_mario.txt
+  capture q4_txt_enregistre.png
+  ok  FormatFichierException attrapee (prix non numerique, ligne 2)
+  ok  menu et panier intacts apres l'erreur
+  capture q4_exc_fichier.png
+  ok  IOException attrapee (fichier absent)
+--- Page 3 : commande (listener « Commander »)
+Commande #1 validee (total : 14.5 EUR)
+Chez Mario a recu la commande #1
+  ok  la page commande s'ouvre, statut VALIDEE
+  capture q3_fenetre_commande.png
+  ok  NumberFormatException attrapee (pourboire « abc »)
+  ok  pourboire 2 -> total 16.5 EUR
+  ok  NoteInvalideException attrapee (note 7)
+  capture q4_exc_note.png
+  ok  note 4.5 acceptee
+  ok  pas de livraison avant le paiement
+Alice (Plus) paye 16.5 EUR sans frais de livraison.
+  ok  paiement accepte, statut PAYEE
+  capture q4_commande_payee.png
+  ok  PaiementImpossibleException attrapee (2e clic sur Payer)
+  capture q4_exc_paiement.png
+--- Notre livreur : suivi de la livraison
+  ok  impossible de noter le livreur avant la livraison
+Livraison generee pour la commande #1
+Bob (scooter) accepte la livraison #1
+  ok  1er clic : Bob accepte la livraison (EN_COURS)
+  ok  accueil : bouton « Suivre ma commande » visible
+  capture q4_accueil_suivi.png
+Alice passe la commande #2 chez Yoshi Sushi
+  ok  menu de Yoshi Sushi : 4 plats
+  + California roll (8.5 EUR) ajoute a la commande #2
+  + Mochi glace (4.5 EUR) ajoute a la commande #2
+  capture q3_fenetre_menu_yoshi.png
+Commande #2 validee (total : 13.0 EUR)
+Yoshi Sushi a recu la commande #2
+Alice (Plus) paye 13.0 EUR sans frais de livraison.
+Livraison generee pour la commande #2
+  ok  LivreurIndisponibleException attrapee (Bob deja en course)
+  capture q4_exc_livreur.png
+  ok  « Suivre ma commande » rouvre la commande #1
+Livraison #1 demarree a 18h30 (arrivee dans 20 min).
+  ok  2e clic : livraison EN_ROUTE
+  capture q4_livraison_en_route.png
+Livraison #1 terminee a 18h50.
+Bob a livre la commande #1
+  ok  3e clic : LIVREE, Bob redevient disponible
+Alice note Bob : 5.0/5
+  ok  note 5 enregistree pour le livreur
+  capture q4_livraison_terminee.png
+--- Retour a l'accueil, serialisation
+  ok  retour a l'accueil
+  ok  plus de livraison en cours
+3 restaurant(s) serialise(s) dans data/restaurants.ser
+  ok  restaurants.ser cree (1566 octets)
+  capture q4_ser_sauvegarde.png
+  ok  OBSERVER : le modele a prevenu la vue, accueil vide sans appel a rafraichir()
+3 restaurant(s) deserialise(s) depuis data/restaurants.ser
+  ok  Charger (.ser) -> 3 restaurants relus
+  ok  le menu de Chez Mario est revenu (3 plats)
+  ok  champ transient remis a 0
+  ok  la note 4.5 a ete conservee
+  capture q4_ser_charge.png
+  ok  IOException attrapee (.ser corrompu)
+  ok  accueil intact apres l'erreur
+  capture q4_exc_ser.png
+--- MVC : la vue observe le modele
+Alice passe la commande #3 chez Chez Mario
+  + Pasta Carbonara (10.0 EUR) ajoute a la commande #3
+  ok  OBSERVER : le total de la vue change quand on modifie le modele directement (0,00 € -> 10,00 €)
+--- MVC : les regles metier sont dans le modele
+Alice passe la commande #900 chez Chez Mario
+  ok  le MODELE refuse la livraison d'une commande non payee (CommandeNonPayeeException)
+  ok  le MODELE refuse un pourboire negatif (PourboireInvalideException)
+  ok  le MODELE refuse de noter le livreur avant la livraison (NotationImpossibleException)
+--- MVC : controle automatique du code source (src/)
+  ok  modele/AucuneNoteException.java ne contient pas « javax.swing »
+  ok  modele/AucuneNoteException.java ne contient pas « java.awt »
+  ok  modele/AucuneNoteException.java ne contient pas « import vue »
+  ok  modele/AucuneNoteException.java ne contient pas « import controleur »
+  ok  modele/CapaciteDepasseeException.java ne contient pas « javax.swing »
+  ok  modele/CapaciteDepasseeException.java ne contient pas « java.awt »
+  ok  modele/CapaciteDepasseeException.java ne contient pas « import vue »
+  ok  modele/CapaciteDepasseeException.java ne contient pas « import controleur »
+  ok  modele/Client.java ne contient pas « javax.swing »
+  ok  modele/Client.java ne contient pas « java.awt »
+  ok  modele/Client.java ne contient pas « import vue »
+  ok  modele/Client.java ne contient pas « import controleur »
+  ok  modele/Commande.java ne contient pas « javax.swing »
+  ok  modele/Commande.java ne contient pas « java.awt »
+  ok  modele/Commande.java ne contient pas « import vue »
+  ok  modele/Commande.java ne contient pas « import controleur »
+  ok  modele/CommandeNonPayeeException.java ne contient pas « javax.swing »
+  ok  modele/CommandeNonPayeeException.java ne contient pas « java.awt »
+  ok  modele/CommandeNonPayeeException.java ne contient pas « import vue »
+  ok  modele/CommandeNonPayeeException.java ne contient pas « import controleur »
+  ok  modele/CommandeVideException.java ne contient pas « javax.swing »
+  ok  modele/CommandeVideException.java ne contient pas « java.awt »
+  ok  modele/CommandeVideException.java ne contient pas « import vue »
+  ok  modele/CommandeVideException.java ne contient pas « import controleur »
+  ok  modele/Donnees.java ne contient pas « javax.swing »
+  ok  modele/Donnees.java ne contient pas « java.awt »
+  ok  modele/Donnees.java ne contient pas « import vue »
+  ok  modele/Donnees.java ne contient pas « import controleur »
+  ok  modele/EcouteurModele.java ne contient pas « javax.swing »
+  ok  modele/EcouteurModele.java ne contient pas « java.awt »
+  ok  modele/EcouteurModele.java ne contient pas « import vue »
+  ok  modele/EcouteurModele.java ne contient pas « import controleur »
+  ok  modele/EtatLivraisonException.java ne contient pas « javax.swing »
+  ok  modele/EtatLivraisonException.java ne contient pas « java.awt »
+  ok  modele/EtatLivraisonException.java ne contient pas « import vue »
+  ok  modele/EtatLivraisonException.java ne contient pas « import controleur »
+  ok  modele/Evaluable.java ne contient pas « javax.swing »
+  ok  modele/Evaluable.java ne contient pas « java.awt »
+  ok  modele/Evaluable.java ne contient pas « import vue »
+  ok  modele/Evaluable.java ne contient pas « import controleur »
+  ok  modele/FastBiteException.java ne contient pas « javax.swing »
+  ok  modele/FastBiteException.java ne contient pas « java.awt »
+  ok  modele/FastBiteException.java ne contient pas « import vue »
+  ok  modele/FastBiteException.java ne contient pas « import controleur »
+  ok  modele/FormatFichierException.java ne contient pas « javax.swing »
+  ok  modele/FormatFichierException.java ne contient pas « java.awt »
+  ok  modele/FormatFichierException.java ne contient pas « import vue »
+  ok  modele/FormatFichierException.java ne contient pas « import controleur »
+  ok  modele/Livraison.java ne contient pas « javax.swing »
+  ok  modele/Livraison.java ne contient pas « java.awt »
+  ok  modele/Livraison.java ne contient pas « import vue »
+  ok  modele/Livraison.java ne contient pas « import controleur »
+  ok  modele/Livreur.java ne contient pas « javax.swing »
+  ok  modele/Livreur.java ne contient pas « java.awt »
+  ok  modele/Livreur.java ne contient pas « import vue »
+  ok  modele/Livreur.java ne contient pas « import controleur »
+  ok  modele/LivreurIndisponibleException.java ne contient pas « javax.swing »
+  ok  modele/LivreurIndisponibleException.java ne contient pas « java.awt »
+  ok  modele/LivreurIndisponibleException.java ne contient pas « import vue »
+  ok  modele/LivreurIndisponibleException.java ne contient pas « import controleur »
+  ok  modele/NotationImpossibleException.java ne contient pas « javax.swing »
+  ok  modele/NotationImpossibleException.java ne contient pas « java.awt »
+  ok  modele/NotationImpossibleException.java ne contient pas « import vue »
+  ok  modele/NotationImpossibleException.java ne contient pas « import controleur »
+  ok  modele/NoteInvalideException.java ne contient pas « javax.swing »
+  ok  modele/NoteInvalideException.java ne contient pas « java.awt »
+  ok  modele/NoteInvalideException.java ne contient pas « import vue »
+  ok  modele/NoteInvalideException.java ne contient pas « import controleur »
+  ok  modele/PaiementImpossibleException.java ne contient pas « javax.swing »
+  ok  modele/PaiementImpossibleException.java ne contient pas « java.awt »
+  ok  modele/PaiementImpossibleException.java ne contient pas « import vue »
+  ok  modele/PaiementImpossibleException.java ne contient pas « import controleur »
+  ok  modele/Panier.java ne contient pas « javax.swing »
+  ok  modele/Panier.java ne contient pas « java.awt »
+  ok  modele/Panier.java ne contient pas « import vue »
+  ok  modele/Panier.java ne contient pas « import controleur »
+  ok  modele/Plat.java ne contient pas « javax.swing »
+  ok  modele/Plat.java ne contient pas « java.awt »
+  ok  modele/Plat.java ne contient pas « import vue »
+  ok  modele/Plat.java ne contient pas « import controleur »
+  ok  modele/PlatIndisponibleException.java ne contient pas « javax.swing »
+  ok  modele/PlatIndisponibleException.java ne contient pas « java.awt »
+  ok  modele/PlatIndisponibleException.java ne contient pas « import vue »
+  ok  modele/PlatIndisponibleException.java ne contient pas « import controleur »
+  ok  modele/PourboireInvalideException.java ne contient pas « javax.swing »
+  ok  modele/PourboireInvalideException.java ne contient pas « java.awt »
+  ok  modele/PourboireInvalideException.java ne contient pas « import vue »
+  ok  modele/PourboireInvalideException.java ne contient pas « import controleur »
+  ok  modele/Restaurant.java ne contient pas « javax.swing »
+  ok  modele/Restaurant.java ne contient pas « java.awt »
+  ok  modele/Restaurant.java ne contient pas « import vue »
+  ok  modele/Restaurant.java ne contient pas « import controleur »
+  ok  modele/Utilisateur.java ne contient pas « javax.swing »
+  ok  modele/Utilisateur.java ne contient pas « java.awt »
+  ok  modele/Utilisateur.java ne contient pas « import vue »
+  ok  modele/Utilisateur.java ne contient pas « import controleur »
+  ok  vue/FenetreAccueil.java ne contient pas « import controleur »
+  ok  vue/FenetreAccueil.java ne contient pas « .ajouterPlat( »
+  ok  vue/FenetreAccueil.java ne contient pas « .valider( »
+  ok  vue/FenetreAccueil.java ne contient pas « .payer( »
+  ok  vue/FenetreAccueil.java ne contient pas « .payerCommande( »
+  ok  vue/FenetreAccueil.java ne contient pas « .noterRider( »
+  ok  vue/FenetreAccueil.java ne contient pas « .noterRestaurant( »
+  ok  vue/FenetreAccueil.java ne contient pas « .noterLivreur( »
+  ok  vue/FenetreAccueil.java ne contient pas « .appliquerPourboire( »
+  ok  vue/FenetreAccueil.java ne contient pas « .setPourboire( »
+  ok  vue/FenetreAccueil.java ne contient pas « .avancerLivraison( »
+  ok  vue/FenetreAccueil.java ne contient pas « .accepterLivraison( »
+  ok  vue/FenetreAccueil.java ne contient pas « .sauvegarderRestaurants( »
+  ok  vue/FenetreAccueil.java ne contient pas « .chargerRestaurants( »
+  ok  vue/FenetreAccueil.java ne contient pas « .sauvegarderMenu( »
+  ok  vue/FenetreAccueil.java ne contient pas « .chargerMenu( »
+  ok  vue/FenetreAccueil.java ne contient pas « .nouvelleCommande( »
+  ok  vue/FenetreAccueil.java ne contient pas « .setRestaurants( »
+  ok  vue/FenetreAccueil.java ne contient pas « .passerCommande( »
+  ok  vue/FenetreAccueil.java ne contient pas « catch ( »
+  ok  vue/FenetreAccueil.java ne contient pas « new Commande( »
+  ok  vue/FenetreAccueil.java ne contient pas « new Restaurant( »
+  ok  vue/FenetreCommande.java ne contient pas « import controleur »
+  ok  vue/FenetreCommande.java ne contient pas « .ajouterPlat( »
+  ok  vue/FenetreCommande.java ne contient pas « .valider( »
+  ok  vue/FenetreCommande.java ne contient pas « .payer( »
+  ok  vue/FenetreCommande.java ne contient pas « .payerCommande( »
+  ok  vue/FenetreCommande.java ne contient pas « .noterRider( »
+  ok  vue/FenetreCommande.java ne contient pas « .noterRestaurant( »
+  ok  vue/FenetreCommande.java ne contient pas « .noterLivreur( »
+  ok  vue/FenetreCommande.java ne contient pas « .appliquerPourboire( »
+  ok  vue/FenetreCommande.java ne contient pas « .setPourboire( »
+  ok  vue/FenetreCommande.java ne contient pas « .avancerLivraison( »
+  ok  vue/FenetreCommande.java ne contient pas « .accepterLivraison( »
+  ok  vue/FenetreCommande.java ne contient pas « .sauvegarderRestaurants( »
+  ok  vue/FenetreCommande.java ne contient pas « .chargerRestaurants( »
+  ok  vue/FenetreCommande.java ne contient pas « .sauvegarderMenu( »
+  ok  vue/FenetreCommande.java ne contient pas « .chargerMenu( »
+  ok  vue/FenetreCommande.java ne contient pas « .nouvelleCommande( »
+  ok  vue/FenetreCommande.java ne contient pas « .setRestaurants( »
+  ok  vue/FenetreCommande.java ne contient pas « .passerCommande( »
+  ok  vue/FenetreCommande.java ne contient pas « catch ( »
+  ok  vue/FenetreCommande.java ne contient pas « new Commande( »
+  ok  vue/FenetreCommande.java ne contient pas « new Restaurant( »
+  ok  vue/FenetreMenu.java ne contient pas « import controleur »
+  ok  vue/FenetreMenu.java ne contient pas « .ajouterPlat( »
+  ok  vue/FenetreMenu.java ne contient pas « .valider( »
+  ok  vue/FenetreMenu.java ne contient pas « .payer( »
+  ok  vue/FenetreMenu.java ne contient pas « .payerCommande( »
+  ok  vue/FenetreMenu.java ne contient pas « .noterRider( »
+  ok  vue/FenetreMenu.java ne contient pas « .noterRestaurant( »
+  ok  vue/FenetreMenu.java ne contient pas « .noterLivreur( »
+  ok  vue/FenetreMenu.java ne contient pas « .appliquerPourboire( »
+  ok  vue/FenetreMenu.java ne contient pas « .setPourboire( »
+  ok  vue/FenetreMenu.java ne contient pas « .avancerLivraison( »
+  ok  vue/FenetreMenu.java ne contient pas « .accepterLivraison( »
+  ok  vue/FenetreMenu.java ne contient pas « .sauvegarderRestaurants( »
+  ok  vue/FenetreMenu.java ne contient pas « .chargerRestaurants( »
+  ok  vue/FenetreMenu.java ne contient pas « .sauvegarderMenu( »
+  ok  vue/FenetreMenu.java ne contient pas « .chargerMenu( »
+  ok  vue/FenetreMenu.java ne contient pas « .nouvelleCommande( »
+  ok  vue/FenetreMenu.java ne contient pas « .setRestaurants( »
+  ok  vue/FenetreMenu.java ne contient pas « .passerCommande( »
+  ok  vue/FenetreMenu.java ne contient pas « catch ( »
+  ok  vue/FenetreMenu.java ne contient pas « new Commande( »
+  ok  vue/FenetreMenu.java ne contient pas « new Restaurant( »
+  ok  vue/Messages.java ne contient pas « import controleur »
+  ok  vue/Messages.java ne contient pas « .ajouterPlat( »
+  ok  vue/Messages.java ne contient pas « .valider( »
+  ok  vue/Messages.java ne contient pas « .payer( »
+  ok  vue/Messages.java ne contient pas « .payerCommande( »
+  ok  vue/Messages.java ne contient pas « .noterRider( »
+  ok  vue/Messages.java ne contient pas « .noterRestaurant( »
+  ok  vue/Messages.java ne contient pas « .noterLivreur( »
+  ok  vue/Messages.java ne contient pas « .appliquerPourboire( »
+  ok  vue/Messages.java ne contient pas « .setPourboire( »
+  ok  vue/Messages.java ne contient pas « .avancerLivraison( »
+  ok  vue/Messages.java ne contient pas « .accepterLivraison( »
+  ok  vue/Messages.java ne contient pas « .sauvegarderRestaurants( »
+  ok  vue/Messages.java ne contient pas « .chargerRestaurants( »
+  ok  vue/Messages.java ne contient pas « .sauvegarderMenu( »
+  ok  vue/Messages.java ne contient pas « .chargerMenu( »
+  ok  vue/Messages.java ne contient pas « .nouvelleCommande( »
+  ok  vue/Messages.java ne contient pas « .setRestaurants( »
+  ok  vue/Messages.java ne contient pas « .passerCommande( »
+  ok  vue/Messages.java ne contient pas « catch ( »
+  ok  vue/Messages.java ne contient pas « new Commande( »
+  ok  vue/Messages.java ne contient pas « new Restaurant( »
+  ok  vue/Style.java ne contient pas « import controleur »
+  ok  vue/Style.java ne contient pas « .ajouterPlat( »
+  ok  vue/Style.java ne contient pas « .valider( »
+  ok  vue/Style.java ne contient pas « .payer( »
+  ok  vue/Style.java ne contient pas « .payerCommande( »
+  ok  vue/Style.java ne contient pas « .noterRider( »
+  ok  vue/Style.java ne contient pas « .noterRestaurant( »
+  ok  vue/Style.java ne contient pas « .noterLivreur( »
+  ok  vue/Style.java ne contient pas « .appliquerPourboire( »
+  ok  vue/Style.java ne contient pas « .setPourboire( »
+  ok  vue/Style.java ne contient pas « .avancerLivraison( »
+  ok  vue/Style.java ne contient pas « .accepterLivraison( »
+  ok  vue/Style.java ne contient pas « .sauvegarderRestaurants( »
+  ok  vue/Style.java ne contient pas « .chargerRestaurants( »
+  ok  vue/Style.java ne contient pas « .sauvegarderMenu( »
+  ok  vue/Style.java ne contient pas « .chargerMenu( »
+  ok  vue/Style.java ne contient pas « .nouvelleCommande( »
+  ok  vue/Style.java ne contient pas « .setRestaurants( »
+  ok  vue/Style.java ne contient pas « .passerCommande( »
+  ok  vue/Style.java ne contient pas « catch ( »
+  ok  vue/Style.java ne contient pas « new Commande( »
+  ok  vue/Style.java ne contient pas « new Restaurant( »
+  ok  controleur/ControleurAccueil.java ne contient pas « javax.swing »
+  ok  controleur/ControleurAccueil.java ne contient pas « new JButton( »
+  ok  controleur/ControleurAccueil.java ne contient pas « new JPanel( »
+  ok  controleur/ControleurAccueil.java ne contient pas « new JLabel( »
+  ok  controleur/ControleurAccueil.java ne contient pas « new JFrame( »
+  ok  controleur/ControleurAccueil.java ne contient pas « new JTextField( »
+  ok  controleur/ControleurApplication.java ne contient pas « javax.swing »
+  ok  controleur/ControleurApplication.java ne contient pas « new JButton( »
+  ok  controleur/ControleurApplication.java ne contient pas « new JPanel( »
+  ok  controleur/ControleurApplication.java ne contient pas « new JLabel( »
+  ok  controleur/ControleurApplication.java ne contient pas « new JFrame( »
+  ok  controleur/ControleurApplication.java ne contient pas « new JTextField( »
+  ok  controleur/ControleurCommande.java ne contient pas « javax.swing »
+  ok  controleur/ControleurCommande.java ne contient pas « new JButton( »
+  ok  controleur/ControleurCommande.java ne contient pas « new JPanel( »
+  ok  controleur/ControleurCommande.java ne contient pas « new JLabel( »
+  ok  controleur/ControleurCommande.java ne contient pas « new JFrame( »
+  ok  controleur/ControleurCommande.java ne contient pas « new JTextField( »
+  ok  controleur/ControleurMenu.java ne contient pas « javax.swing »
+  ok  controleur/ControleurMenu.java ne contient pas « new JButton( »
+  ok  controleur/ControleurMenu.java ne contient pas « new JPanel( »
+  ok  controleur/ControleurMenu.java ne contient pas « new JLabel( »
+  ok  controleur/ControleurMenu.java ne contient pas « new JFrame( »
+  ok  controleur/ControleurMenu.java ne contient pas « new JTextField( »
+--- Historique plein
+Alice passe la commande #4 chez Sushi Tokyo
+Alice passe la commande #5 chez Sushi Tokyo
+Alice passe la commande #6 chez Sushi Tokyo
+Alice passe la commande #7 chez Sushi Tokyo
+Alice passe la commande #8 chez Sushi Tokyo
+Alice passe la commande #9 chez Sushi Tokyo
+Alice passe la commande #10 chez Sushi Tokyo
+Alice passe la commande #11 chez Sushi Tokyo
+Alice passe la commande #12 chez Sushi Tokyo
+Alice passe la commande #13 chez Sushi Tokyo
+Alice passe la commande #14 chez Sushi Tokyo
+Alice passe la commande #15 chez Sushi Tokyo
+Alice passe la commande #16 chez Sushi Tokyo
+Alice passe la commande #17 chez Sushi Tokyo
+Alice passe la commande #18 chez Sushi Tokyo
+Alice passe la commande #19 chez Sushi Tokyo
+  ok  CapaciteDepasseeException attrapee (21e commande)
+Tous les tests TP7 sont passes (273 verifications).

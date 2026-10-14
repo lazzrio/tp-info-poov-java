@@ -1,0 +1,2 @@
+Pizza Margherita;12.5;Tomate, mozzarella;gluten,lactose
+Tiramisu;5.5
